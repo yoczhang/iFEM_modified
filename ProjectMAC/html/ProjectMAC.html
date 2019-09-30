@@ -1,0 +1,251 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Test example 1</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-01-02"><meta name="DC.source" content="ProjectMAC.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Test example 1</h1><!--introduction--><p>domain is [-1,1]^2, analytical solution is u = 20*x.*y.^3, v = 5*x.^4-5*y.^4, p = 60*x.^2.*y - 20*y.^3.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Step 1: Gauss-Seidel relaxation of velocity</a></li><li><a href="#2">Step 2: Distributive relaxation of velocity and pressue</a></li><li><a href="#3">Step 3: Two level method</a></li><li><a href="#4">Step 4: Vcycle multigrid method</a></li><li><a href="#5">Test example 2: Driven cavity problem</a></li><li><a href="#6">Show location of variables</a></li><li><a href="#7">Show the process of prolongation for U</a></li><li><a href="#8">Show the process of prolongation for V</a></li></ul></div><h2>Step 1: Gauss-Seidel relaxation of velocity<a name="1"></a></h2><h2>Step 2: Distributive relaxation of velocity and pressue<a name="2"></a></h2><pre class="codeinput">k = 3;
+ite = zeros(k+1,1); time = zeros(k+1,1);
+<span class="keyword">for</span> i = 3:k+3
+   n = 2^i;
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h] = dataStokes(n);
+   [ite(i-2), time(i-2)] = testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
+<span class="keyword">end</span>
+size = 2.^(3:k+3); size = size';
+display(<span class="string">'Table 1: DGS'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'Time'</span>, <span class="string">'Ite'</span>};
+disptable(colname,size,[], time,[], ite,[]);
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 1: DGS
+#1/h    Time      Ite   
+ 8      1.125     614
+16   4.359375    2994
+32   23.89063   13486
+64   195.8125   57996
+
+</pre><h2>Step 3: Two level method<a name="3"></a></h2><pre class="codeinput">k = 3;
+ite = zeros(k+1,1); time = zeros(k+1,1);
+<span class="keyword">for</span> i = 3:k+3
+   n = 2^i;
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
+   [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, 2);
+<span class="keyword">end</span>
+size = 2.^(3:k+3); size = size';
+display(<span class="string">'Table 2: TwoLevel'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'Time'</span>, <span class="string">'Ite'</span>};
+disptable(colname,size,[], time,[], ite,[]);
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 2: TwoLevel
+#1/h    Time    Ite 
+ 8   0.953125   5 
+16    3.96875   6 
+32    17.4531   6 
+64    91.5625   7 
+
+</pre><h2>Step 4: Vcycle multigrid method<a name="4"></a></h2><pre class="codeinput">k = 6;
+errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
+errPreL2 = zeros(k+1,1);
+ite = zeros(k+1,1); time = zeros(k+1,1);
+<span class="keyword">for</span> i = 3:k+3
+   n = 2^i; J = i-1;
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
+   [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, J);
+   [errVelL2(i-2), errVelH1(i-2), errVelInfi(i-2), errPreL2(i-2)] = Error(uh, vh, ph, uI, vI, pI);
+<span class="keyword">end</span>
+size = 2.^(3:k+3); size = size';
+display(<span class="string">'Table 3: Vcycle'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'VelL2'</span>, <span class="string">'VelH1'</span>, <span class="string">'VelInfi'</span>, <span class="string">'PreL2'</span>, <span class="string">'Time'</span>, <span class="string">'Ite'</span>};
+disptable(colname,size,[], errVelL2,[], errVelH1,[], errVelInfi,[], errPreL2,[], time,[], ite,[]);
+
+figure; showrate(width./size, errVelL2);
+h1 = legend(<span class="string">'$ \frac {|| \mathbf{u}_I - \mathbf{u}_h ||} {|| \mathbf{u}_I ||}$'</span>,<span class="string">'Location'</span>,<span class="string">'southeast'</span>);
+set(h1,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+
+figure; showrate(width./size, errVelH1);
+h2 = legend(<span class="string">'$|| \nabla(\mathbf{u}_I - \mathbf{u}_h) ||$'</span>,<span class="string">'Location'</span>,<span class="string">'southeast'</span>);
+set(h2,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+
+figure; showrate(width./size, errVelInfi);
+h3 = legend(<span class="string">'$|| \mathbf{u}_I - \mathbf{u}_h ||_{\infty}$'</span>,<span class="string">'Location'</span>,<span class="string">'southeast'</span>);
+set(h3,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+
+figure; showrate(width./size, errPreL2);
+h4 = legend(<span class="string">'$ \frac {|| p_I - p_h ||} {|| p_I||}$'</span>,<span class="string">'Location'</span>,<span class="string">'southeast'</span>);
+set(h4,<span class="string">'Interpreter'</span>,<span class="string">'latex'</span>)
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 3: Vcycle
+#1/h     VelL2       VelH1       VelInfi       PreL2       Time     Ite 
+  8     0.052847      1.5412      0.30545      0.15633   0.921875    5
+ 16     0.016915     0.82658     0.097917     0.061171    1.28125    7
+ 32    0.0047945     0.36961     0.027544     0.020793    1.82813    8
+ 64    0.0012709     0.14931     0.009239    0.0064934    2.70313    9
+128   0.00032628    0.057011    0.0027491    0.0019212    5.54688   10
+256   8.2556e-05    0.021077   0.00076806   0.00054843    15.1875   10
+512   2.0754e-05   0.0076469   0.00020667   0.00015272    60.0781   11
+
+</pre><img vspace="5" hspace="5" src="ProjectMAC_01.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_02.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_03.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_04.png" alt=""> <h2>Test example 2: Driven cavity problem<a name="5"></a></h2><p>domain is [-1,1]^2, Stokes equation with zero Dirichlet boundary condition except on the top: { y = 1, -1 &lt; x &lt; 1 | u = 1, v = 0}.</p><pre class="codeinput">n = 128; J = 6;
+step = drivenCavity(n, J);
+clear <span class="string">all</span>
+</pre><img vspace="5" hspace="5" src="ProjectMAC_05.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_06.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_07.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_08.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_09.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_10.png" alt=""> <h2>Show location of variables<a name="6"></a></h2><pre class="codeinput">figureIndex;
+clear <span class="string">all</span>
+</pre><img vspace="5" hspace="5" src="ProjectMAC_11.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_12.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_13.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_14.png" alt=""> <h2>Show the process of prolongation for U<a name="7"></a></h2><p>Restriction is easy to implement with one index, one must consider different cases for prolongation.</p><pre class="codeinput">figureProU;
+clear <span class="string">all</span>
+</pre><img vspace="5" hspace="5" src="ProjectMAC_15.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_16.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_17.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_18.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_19.png" alt=""> <h2>Show the process of prolongation for V<a name="8"></a></h2><pre class="codeinput">figureProV;
+clear <span class="string">all</span>
+</pre><img vspace="5" hspace="5" src="ProjectMAC_20.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_21.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_22.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_23.png" alt=""> <img vspace="5" hspace="5" src="ProjectMAC_24.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Test example 1
+% domain is [-1,1]^2, analytical solution is
+% u = 20*x.*y.^3, v = 5*x.^4-5*y.^4, p = 60*x.^2.*y - 20*y.^3.
+
+%% Step 1: Gauss-Seidel relaxation of velocity
+%% Step 2: Distributive relaxation of velocity and pressue
+k = 3;
+ite = zeros(k+1,1); time = zeros(k+1,1); 
+for i = 3:k+3
+   n = 2^i; 
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h] = dataStokes(n);
+   [ite(i-2), time(i-2)] = testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
+end
+size = 2.^(3:k+3); size = size';
+display('Table 1: DGS');
+colname = {'#1/h', 'Time', 'Ite'};
+disptable(colname,size,[], time,[], ite,[]);
+clear all
+
+%% Step 3: Two level method
+k = 3;
+ite = zeros(k+1,1); time = zeros(k+1,1); 
+for i = 3:k+3
+   n = 2^i; 
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
+   [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, 2);
+end
+size = 2.^(3:k+3); size = size';
+display('Table 2: TwoLevel');
+colname = {'#1/h', 'Time', 'Ite'};
+disptable(colname,size,[], time,[], ite,[]);
+clear all
+
+
+%% Step 4: Vcycle multigrid method
+k = 6; 
+errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
+errPreL2 = zeros(k+1,1);
+ite = zeros(k+1,1); time = zeros(k+1,1); 
+for i = 3:k+3
+   n = 2^i; J = i-1; 
+   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
+   [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, J);
+   [errVelL2(i-2), errVelH1(i-2), errVelInfi(i-2), errPreL2(i-2)] = Error(uh, vh, ph, uI, vI, pI);
+end
+size = 2.^(3:k+3); size = size';
+display('Table 3: Vcycle');
+colname = {'#1/h', 'VelL2', 'VelH1', 'VelInfi', 'PreL2', 'Time', 'Ite'};
+disptable(colname,size,[], errVelL2,[], errVelH1,[], errVelInfi,[], errPreL2,[], time,[], ite,[]);
+
+figure; showrate(width./size, errVelL2);
+h1 = legend('$ \frac {|| \mathbf{u}_I - \mathbf{u}_h ||} {|| \mathbf{u}_I ||}$','Location','southeast');
+set(h1,'Interpreter','latex')
+
+figure; showrate(width./size, errVelH1);
+h2 = legend('$|| \nabla(\mathbf{u}_I - \mathbf{u}_h) ||$','Location','southeast');
+set(h2,'Interpreter','latex')
+
+figure; showrate(width./size, errVelInfi);
+h3 = legend('$|| \mathbf{u}_I - \mathbf{u}_h ||_{\infty}$','Location','southeast');
+set(h3,'Interpreter','latex')
+
+figure; showrate(width./size, errPreL2);
+h4 = legend('$ \frac {|| p_I - p_h ||} {|| p_I||}$','Location','southeast');
+set(h4,'Interpreter','latex')
+clear all
+
+
+%% Test example 2: Driven cavity problem
+% domain is [-1,1]^2, Stokes equation with zero Dirichlet 
+% boundary condition except on the top:
+% { y = 1, -1 < x < 1 | u = 1, v = 0}.
+n = 128; J = 6;
+step = drivenCavity(n, J);
+clear all
+
+
+%% Show location of variables
+figureIndex;
+clear all
+
+
+%% Show the process of prolongation for U
+% Restriction is easy to implement with one index,
+% one must consider different cases for prolongation.
+figureProU;
+clear all
+
+
+%% Show the process of prolongation for V
+figureProV;
+clear all
+##### SOURCE END #####
+--></body></html>

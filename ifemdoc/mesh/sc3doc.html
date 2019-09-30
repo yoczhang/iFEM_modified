@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>sc3doc</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<style type="text/css">
+/* Overrides of notebook CSS for static HTML export */
+body {
+  overflow: visible;
+  padding: 8px;
+}
+div#notebook {
+  overflow: visible;
+  border-top: none;
+}@media print {
+  div.cell {
+    display: block;
+    page-break-inside: avoid;
+  } 
+  div.output_wrapper { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+  div.output { 
+    display: block;
+    page-break-inside: avoid; 
+  }
+}
+</style>
+
+<!-- Custom stylesheet, it must be in the parent directory as the html file -->
+<link rel="stylesheet" type="text/css" media="all" href="../doc.css" />
+<link rel="stylesheet" type="text/css" media="all" href="doc.css" />
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simplicial-Complex-in-Three-Dimensions">Simplicial Complex in Three Dimensions<a class="anchor-link" href="#Simplicial-Complex-in-Three-Dimensions">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We dsecribe the data structure of the simplicial complex associated to a three dimensional trianglulation give by <code>node,elem</code> . The <code>node</code> records
+the coordinates of vertices and <code>elem</code> is the pointer from local to
+global incices of vertices. See <a href="meshbasicdoc.html">Basic mesh data structure</a>.</p>
+<p>A brief summary.</p>
+<ul>
+<li><p><code>edge</code>: asecond ordering, i.e. <code>edge(:,1)&lt;edge(:,2)</code></p>
+</li>
+<li><p><code>face</code>: asecond ordering, i.e. <code>face(:,1)&lt;face(:,2)&lt;face(:,3)</code></p>
+</li>
+<li><p><code>elem</code>: either the positive ordering or the ascend ordering. The default one is the positive ordering and the asecond ordering is mainly used for edge and face elements.</p>
+</li>
+<li><p>Use <code>[elem,bdFlag] = sortelem3(elem,bdFlag)</code> to change the ordering to the ascend ordering. Note that <code>bdFlag</code> should be switched together.</p>
+</li>
+</ul>
+<blockquote><p>The multigrid solvers use the original ordering of <code>elem</code> obtained from either uniform refinement or bisection methods. So let <code>elemold=elem</code> before sort.</p>
+</blockquote>
+<ul>
+<li>Examples on the usage: <code>Poisson3RT0; Maxwell; Maxwell2;</code></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Outline">Outline<a class="anchor-link" href="#Outline">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-matlab"><pre><span></span><span class="n">elem</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">8</span><span class="p">;</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">7</span><span class="p">];</span>
+<span class="n">node</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span> <span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">showmesh3</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="n">elem</span><span class="p">,[],</span><span class="s">&#39;FaceAlpha&#39;</span><span class="p">,</span><span class="mf">0.25</span><span class="p">);</span>
+<span class="n">findelem3</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="n">elem</span><span class="p">);</span>
+<span class="n">findnode3</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="n">elem</span><span class="p">(:));</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+AAAAAElFTkSuQmCC
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The basic data structure of a mesh consists of <code>node</code> and <code>elem</code>. The corresponding simplicial complex consists of vertices, edges, faces, and tetrahedron. We shall discuss three issues</p>
+<ul>
+<li><em>Indexing</em> of simplexes</li>
+<li><em>Ordering</em> of vertices</li>
+<li><em>Orientation</em> of simplexes</li>
+</ul>
+<p>The indexing and ordering are related and the ordering and orientation
+are mixed together. However the indexing has nothing to do with the
+orientation. The indexing and ordering are the combinarotry structure,
+i.e. only <code>elem</code> is needed, while the orientation also depends on <code>node</code>,
+the geometry emembdding of vertices.</p>
+<p>For indexing, ordering and orientation, there are always local and global versions. The relation between the local and global version is the most complicated issue.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Indexing-of-Simplexes">Indexing of Simplexes<a class="anchor-link" href="#Indexing-of-Simplexes">&#182;</a></h2><p>The indexing refers to the numbering of simplexes, e.g., which face is
+numbered as the first one. There are two types of the indexing: local and
+global. Each simplex in the simplicial complex has a unique index which
+is called the global index. In one tetrahedra, the four vertices and four
+faces have their local index from 1:4.</p>
+<p>In the assembling procedure of finite element methods, an element-wise
+matrix using the local indexing is first computed and then assembled to get a
+big matrix using the global indexing. Thus the pointer from the local
+indexing to the global indexing is indispensible. For bases independent of
+the ordering and orientation, e.g., <code>P1</code> and <code>P2</code> elements, this pointer
+is sufficient, otherwise, the inconsistency of the local ordering/orientation
+and the global ordering/orientation should be taken into account.</p>
+<h3 id="Local-indexing">Local indexing<a class="anchor-link" href="#Local-indexing">&#182;</a></h3><p>The tetrahedron consists of four vertices indexed as [1 2 3 4]. Each
+tetrahedron contains four faces and six edges. They can be indexed as</p>
+
+<pre><code>locFace = [2 3 4; 1 3 4; 1 2 4; 1 2 3];
+locEdge = [1 2; 1 3; 1 4; 2 3; 2 4; 3 4];
+
+</code></pre>
+<p>In <code>locFace</code>, the i-th face is opposite to the i-th vertices and thus
+this is called <em>opposite indexing</em>. In <code>locEdge</code>, it is the
+<em>lexicographic indexing</em> which is induced from the lexicographic ordering
+of the six edges. The ordering of vertices of each face or edge will not
+change the indexing. For example, the following <code>locFacec</code> and <code>locEdged</code>
+has the same indexing as <code>locFace</code> and <code>locEdge</code> but a different ordering
+of vertices.</p>
+
+<pre><code>locFacec = [2 3 4; 1 4 3; 1 2 4; 1 3 2];
+locEdge = [2 1; 3 1; 4 1; 3 2; 4 2; 4 3];
+
+</code></pre>
+<p>Indeed any permuation of each simplex will represent the same simplex and
+will not change the indexing. The ordering of vertices will affect the
+orientation and will be discussed later.</p>
+<p>For a face consists of three vertices [1 2 3], there are two indexing
+schemes of its three edges.</p>
+<ul>
+<li>Oppoiste indexing        <code>[2 3; 3 1; 1 2]</code></li>
+<li>Lexicographic indexing   <code>[1 2; 1 3; 2 3]</code></li>
+</ul>
+<p>Each indexing scheme has its advantange and disadavantange and which one
+to chose depends on the consideration of ordering and orientation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Global-indexing-and-vertex-pointers">Global indexing and vertex pointers<a class="anchor-link" href="#Global-indexing-and-vertex-pointers">&#182;</a></h3><p>Each simplex in the simplicial complex has a unqiuely index. It is
+represented by vertices pointer from the local index to the globa index
+of vertices.</p>
+<p>The matrix <code>elem</code> is the pointer from local to global indices of vertices
+of tetrahedron, e.g. <code>elem(t,1)=25</code> means the first vertex of the
+tetrahedron t is the 25-th vertex.</p>
+<p>Similarly the <code>NE x 2</code> matrix <code>edge</code> records all edges and the <code>NF x 3</code> by 3
+matrix <code>face</code> records all faces of the triangulation. These are vertices
+pointers. We shall discuss the elementwise pointer from the local indices to
+the global indices for edges and faces.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generate-index-pointers-for-edges-and-faces">Generate index pointers for edges and faces<a class="anchor-link" href="#Generate-index-pointers-for-edges-and-faces">&#182;</a></h3><p>One can easily collect edges and faces elementwise. The issue is the
+duplication. For example, each interior face will be counted twice. The
+<code>unique</code> function is applied such that each edge or face has a unique
+global index.</p>
+<p><strong>Edge and Face</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-matlab"><pre><span></span><span class="n">totalEdge</span> <span class="p">=</span> <span class="n">uint32</span><span class="p">([</span><span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">3</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">4</span><span class="p">]);</span> <span class="c">...</span>
+                    <span class="n">elem</span><span class="p">(:,[</span><span class="mi">2</span> <span class="mi">3</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">2</span> <span class="mi">4</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">3</span> <span class="mi">4</span><span class="p">])]);</span>
+<span class="n">sortedTotalEdge</span> <span class="p">=</span> <span class="n">sort</span><span class="p">(</span><span class="n">totalEdge</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="p">[</span><span class="n">edge</span><span class="p">,</span> <span class="o">~</span><span class="p">,</span> <span class="n">je</span><span class="p">]</span> <span class="p">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">sortedTotalEdge</span><span class="p">,</span><span class="s">&#39;rows&#39;</span><span class="p">);</span>
+<span class="n">display</span><span class="p">(</span><span class="n">edge</span><span class="p">);</span>
+
+<span class="n">totalFace</span> <span class="p">=</span> <span class="n">uint32</span><span class="p">([</span><span class="n">elem</span><span class="p">(:,[</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">3</span><span class="p">]);</span> <span class="c">...</span>
+                    <span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">4</span><span class="p">]);</span> <span class="n">elem</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">2</span><span class="p">])]);</span>
+<span class="n">sortedTotalFace</span> <span class="p">=</span> <span class="n">sort</span><span class="p">(</span><span class="n">totalFace</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>                
+<span class="p">[</span><span class="n">face</span><span class="p">,</span> <span class="n">i2</span><span class="p">,</span> <span class="n">jf</span><span class="p">]</span> <span class="p">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">sortedTotalFace</span><span class="p">,</span><span class="s">&#39;rows&#39;</span><span class="p">);</span>
+<span class="n">display</span><span class="p">(</span><span class="n">face</span><span class="p">);</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+edge =
+
+           1           4
+           1           5
+           1           7
+           1           8
+           4           5
+           4           7
+           4           8
+           5           7
+           5           8
+
+
+face =
+
+           1           4           5
+           1           4           7
+           1           4           8
+           1           5           7
+           1           5           8
+           4           5           7
+           4           5           8
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In iFEM, <code>N,NE,NF,NT</code> represents the number of vertices, edges, faces and
+tetrahedrons, resprectively.</p>
+
+<pre><code>N = size(node,1); NT = size(elem,1); NF = size(face,1); NE = size(edge,1);
+
+</code></pre>
+<p>In the assembling procedure, the matrix is always computed elementwise
+and then assemble to a big one. A pointer from the local index of a
+simplex to its global index is thus indispensible.</p>
+<p><strong>Elementwise pointers</strong></p>
+<ul>
+<li><code>elem2node = elem</code></li>
+<li><code>elem2face(1:NT, 1:4)</code></li>
+<li><code>elem2edge(1:NT, 1:6)</code></li>
+</ul>
+<p>Such information is exactly stored in the output of <code>unique</code> function.
+For example, elem2face(t,1) = 17 means the first face of t (spanned by [2
+3 4]) is the 17-th element in the <code>face</code> matrix.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-matlab"><pre><span></span><span class="n">N</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="n">NT</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="n">NF</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">face</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="n">NE</span> <span class="p">=</span> <span class="nb">size</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">elem2edge</span> <span class="p">=</span> <span class="n">uint32</span><span class="p">(</span><span class="nb">reshape</span><span class="p">(</span><span class="n">je</span><span class="p">,</span><span class="n">NT</span><span class="p">,</span><span class="mi">6</span><span class="p">));</span>
+<span class="n">elem2face</span> <span class="p">=</span> <span class="n">uint32</span><span class="p">(</span><span class="nb">reshape</span><span class="p">(</span><span class="n">jf</span><span class="p">,</span><span class="n">NT</span><span class="p">,</span><span class="mi">4</span><span class="p">));</span>
+<span class="n">display</span><span class="p">(</span><span class="n">elem2edge</span><span class="p">);</span>
+<span class="n">display</span><span class="p">(</span><span class="n">elem2face</span><span class="p">);</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+elem2edge =
+
+           1           2           4           5           7           9
+           1           2           3           5           6           8
+
+
+elem2face =
+
+           7           5           3           1
+           6           4           2           1
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Face to edge Pointer</strong></p>
+<p>|face2edge(1:NF,1:3)| records the global indices of three edges of a
+face. This pointer depends on the ordering of vertices of faces and the
+indexing of local edges in a face. We list the following two important
+cases. Other combinations is possible but not attractive.</p>
+<ul>
+<li>Ascend ordering.</li>
+</ul>
+<p>All local faces and local edges are ascend ordered.</p>
+
+<pre><code>locFace = [2 3 4; 1 3 4; 1 2 4; 1 2 3];
+locEdge = [1 2; 1 3; 1 4; 2 3; 2 4; 3 4];
+edgeofFace = [1 2; 1 3; 2 3];
+locface2edge = [4 5 6; 2 3 6; 1 3 5; 1 2 4];
+
+</code></pre>
+<ul>
+<li>Consistent ordering</li>
+</ul>
+<p>The local face is ordered such that the corresponding orientation is
+consistent with the induced orientation.
+    locFace = [2 3 4; 1 4 3; 1 2 4; 1 3 2];
+    locEdge = [1 2; 1 3; 1 4; 2 3; 2 4; 3 4];
+    edgeofFace = [2 3; 3 1; 1 2];<br>
+    locface2edge = [6 5 4; 6 2 3; 5 3 1; 4 1 2];</p>
+<p>The global one can be obtained from the composition of <code>elem2face</code> and
+<code>locface2edge</code>. For example, for the asecnd ordering scheme,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-matlab"><pre><span></span><span class="n">face2edge</span><span class="p">(</span><span class="n">elem2face</span><span class="p">(:,</span><span class="mi">1</span><span class="p">),:)</span> <span class="p">=</span> <span class="n">elem2edge</span><span class="p">(:,[</span><span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">]);</span>
+<span class="n">face2edge</span><span class="p">(</span><span class="n">elem2face</span><span class="p">(:,</span><span class="mi">2</span><span class="p">),:)</span> <span class="p">=</span> <span class="n">elem2edge</span><span class="p">(:,[</span><span class="mi">2</span> <span class="mi">3</span> <span class="mi">6</span><span class="p">]);</span>
+<span class="n">face2edge</span><span class="p">(</span><span class="n">elem2face</span><span class="p">(:,</span><span class="mi">3</span><span class="p">),:)</span> <span class="p">=</span> <span class="n">elem2edge</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span><span class="p">]);</span>
+<span class="n">face2edge</span><span class="p">(</span><span class="n">elem2face</span><span class="p">(:,</span><span class="mi">4</span><span class="p">),:)</span> <span class="p">=</span> <span class="n">elem2edge</span><span class="p">(:,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">4</span><span class="p">]);</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Ordering-of-Vertices">Ordering of Vertices<a class="anchor-link" href="#Ordering-of-Vertices">&#182;</a></h2><p>We discuss the ordering of vertices of simplexes. Again there are local
+ordering and global ordering. They may not be consistent and a sign array
+is used to record the inconsistency if any.</p>
+<p>The local ordering refers to the ordering of vertices in <code>locFace</code> or
+<code>locEdge</code>, i.e. the ordering of the local index of vertices. For elements
+associated to faces or edges, the local ordering could be used in the
+formulation of the local basis and thus the ordering does matter.</p>
+<p>The global ordering refers to the ordering of vertices in <code>face</code> or
+<code>edge</code>, i.e., the ordering of the global index of vertices. Note that
+that in either local or global ordering, permutation of vertices will
+represent the same simplex. To fix an ordering we need extra information.</p>
+<h3 id="elem">elem<a class="anchor-link" href="#elem">&#182;</a></h3><p>The local ordering is always [1 2 3 4]. Any permutation of four
+vertices of a tetrahedon still represents the same tetrahedron. Such
+freedom provide a room to record more information like:</p>
+<ul>
+<li>global ordering of vertices</li>
+<li>an orientation of element</li>
+<li>refinement rules (uniform refinement or bisection)</li>
+</ul>
+<p>For 2-D triangulations, three vertices of a triangle in 2-D is sorted
+counter-cloclwise and the first vertex is chosen as the newest vertex.
+Such ordering enables the efficient implementation of local refinement
+and coarsening in 2-D; see <a href="bisectdoc.html">Bisection in Two Dimensions</a>
+and <a href="coarsendoc.html">Coarsening in Two Dimensions</a>.</p>
+<p>In 3-D, for the longest edge bisection, the newest vertex (with the highest generation) is stored as the last (4-th) vertex of a tetrahedron. For <a href="uniformrefine3doc.html">3-D Red Refinement</a>, the ordering determines the shape regularity of refined triangulation. Permuation of vertices in <code>elem</code> could deterioriate the
+angle condition after the refinement.</p>
+<p>We shall reserve the ordering of <code>elem</code> from the mesh refinement and
+coarsening since they are more subtle. We switch the ordering when
+generating data structure for finite element basis and assemble the
+matrix equation. Such sorting is hidden in the subroutines when a finite
+element basis requiring ordering is generated.</p>
+<p>Two types of ordering of <code>elem</code> is of particular importantance</p>
+<ul>
+<li>Positive ordering</li>
+<li>Ascend ordering</li>
+</ul>
+<p>In the positive ordering, the four vertices are ordered such that the
+signed volume, the mix product of vectors (v12,v13,v14), is positive.
+This is the default ordering used so far. <code>fixorder3</code> will switch the
+vertices for elements with negative volume.</p>
+
+<pre><code>v = simplexvolume(node,elem) % returns the singed volume
+elem = fixorder(node,elem)   % switchs the vertices for elements with negative volume.
+
+</code></pre>
+<p>In the ascend ordering, the vertices of <code>elem</code> is sorted such that</p>
+
+<pre><code>elem(t,1) &lt; elem(t,2) &lt; elem(t,3) &lt; elem(t,4). 
+
+</code></pre>
+<p>Such ordering will benefit the construction of local bases for high order basis or basis with orientation. This can be easily achieved by <code>elem = sort(elem,2)</code>.
+Howevery, one has to rotate the boundary flag accordingly using</p>
+
+<pre><code>[elem,bdFlag] = sortelem3(elem,bdFlag);</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Orientation">Orientation<a class="anchor-link" href="#Orientation">&#182;</a></h2>
+</div>
+</div>
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>

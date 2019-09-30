@@ -1,0 +1,223 @@
+int n = 3;
+
+border a1(t=0,0.5){x=t; y=0;};
+border b1(t=0,0.5){x=0.5; y=t;};
+border c1(t=0.5,0){x=t; y=0.5;};
+border d1(t=0.5,0){x=0; y=t;};
+mesh Th1 = buildmesh(a1(4*n)+b1(4*n)+c1(4*n)+d1(4*n));
+
+border a2(t=0.5,1){x=t; y=0;};
+border b2(t=0,0.5){x=1; y=t;};
+border c2(t=1,0.5){x=t; y=0.5;};
+border d2(t=0.5,0){x=0.5; y=t;};
+mesh Th2 = buildmesh(a2(4*n)+b2(4*n)+c2(4*n)+d2(4*n));
+
+border a3(t=0,0.5){x=t; y=0.5;};
+border b3(t=0.5,1){x=0.5; y=t;};
+border c3(t=0.5,0){x=t; y=1;};
+border d3(t=1,0.5){x=0; y=t;};
+mesh Th3 = buildmesh(a3(4*n)+b3(4*n)+c3(4*n)+d3(4*n));
+
+border a4(t=0.75,1){x=t; y=0.5;};
+border b4(t=0.5,0.75){x=1; y=t;};
+border c4(t=1,0.75){x=t; y=0.75;};
+border d4(t=0.75,0.5){x=0.75; y=t;};
+mesh Th4 = buildmesh(a4(2*n)+b4(2*n)+c4(2*n)+d4(2*n));
+
+border a5(t=0.75,1){x=t; y=0.75;};
+border b5(t=0.75,1){x=1; y=t;};
+border c5(t=1,0.75){x=t; y=1;};
+border d5(t=1,0.75){x=0.75; y=t;};
+mesh Th5 = buildmesh(a5(2*n)+b5(2*n)+c5(2*n)+d5(2*n));
+
+border a6(t=0.5,0.75){x=t; y=0.75;};
+border b6(t=0.75,1){x=0.75; y=t;};
+border c6(t=0.75,0.5){x=t; y=1;};
+border d6(t=1,0.75){x=0.5; y=t;};
+mesh Th6 = buildmesh(a6(2*n)+b6(2*n)+c6(2*n)+d6(2*n));
+
+border a7(t=0.5,0.625){x=t; y=0.5;};
+border b7(t=0.5,0.625){x=0.625; y=t;};
+border c7(t=0.625,0.5){x=t; y=0.625;};
+border d7(t=0.625,0.5){x=0.5; y=t;};
+mesh Th7 = buildmesh(a7(n)+b7(n)+c7(n)+d7(n));
+
+border a8(t=0.625,0.75){x=t; y=0.5;};
+border b8(t=0.5,0.625){x=0.75; y=t;};
+border c8(t=0.75,0.625){x=t; y=0.625;};
+border d8(t=0.625,0.5){x=0.625; y=t;};
+mesh Th8 = buildmesh(a8(n)+b8(n)+c8(n)+d8(n));
+
+border a9(t=0.625,0.75){x=t; y=0.625;};
+border b9(t=0.625,0.75){x=0.75; y=t;};
+border c9(t=0.75,0.625){x=t; y=0.75;};
+border d9(t=0.75,0.625){x=0.625; y=t;};
+mesh Th9 = buildmesh(a9(n)+b9(n)+c9(n)+d9(n));
+
+border a10(t=0.5,0.625){x=t; y=0.625;};
+border b10(t=0.625,0.75){x=0.625; y=t;};
+border c10(t=0.625,0.5){x=t; y=0.75;};
+border d10(t=0.75,0.625){x=0.5; y=t;};
+mesh Th10 = buildmesh(a10(n)+b10(n)+c10(n)+d10(n));
+
+plot(Th1,Th2,Th3, Th4,Th5,Th6, Th7,Th8,Th9,Th10);
+
+cout<<Th1.nt+Th2.nt+Th3.nt+Th4.nt+Th5.nt+Th6.nt+Th7.nt+Th8.nt+Th9.nt+Th10.nt<<endl;
+
+ofstream f1("domainElem1.dat");
+for(int i=0;i<Th1.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f1<<i<<"      "<<j<<"      "<<Th1[i][j]<<endl;
+}
+}
+ofstream ff1("domainNode1.dat");
+for(int i=0;i<Th1.nv;i++)
+{
+ff1<<i<<"      "<<Th1(i).x<<"      "<<Th1(i).y<<endl;
+}
+
+
+ofstream f2("domainElem2.dat");
+for(int i=0;i<Th2.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f2<<i<<"      "<<j<<"      "<<Th2[i][j]<<endl;
+}
+}
+ofstream ff2("domainNode2.dat");
+for(int i=0;i<Th2.nv;i++)
+{
+ff2<<i<<"      "<<Th2(i).x<<"      "<<Th2(i).y<<endl;
+}
+
+
+
+
+ofstream f3("domainElem3.dat");
+for(int i=0;i<Th3.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f3<<i<<"      "<<j<<"      "<<Th3[i][j]<<endl;
+}
+}
+ofstream ff3("domainNode3.dat");
+for(int i=0;i<Th3.nv;i++)
+{
+ff3<<i<<"      "<<Th3(i).x<<"      "<<Th3(i).y<<endl;
+}
+
+
+
+ofstream f4("domainElem4.dat");
+for(int i=0;i<Th4.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f4<<i<<"      "<<j<<"      "<<Th4[i][j]<<endl;
+}
+}
+ofstream ff4("domainNode4.dat");
+for(int i=0;i<Th4.nv;i++)
+{
+ff4<<i<<"      "<<Th4(i).x<<"      "<<Th4(i).y<<endl;
+}
+
+
+
+ofstream f5("domainElem5.dat");
+for(int i=0;i<Th5.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f5<<i<<"      "<<j<<"      "<<Th5[i][j]<<endl;
+}
+}
+ofstream ff5("domainNode5.dat");
+for(int i=0;i<Th5.nv;i++)
+{
+ff5<<i<<"      "<<Th5(i).x<<"      "<<Th5(i).y<<endl;
+}
+
+
+
+ofstream f6("domainElem6.dat");
+for(int i=0;i<Th6.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f6<<i<<"      "<<j<<"      "<<Th6[i][j]<<endl;
+}
+}
+ofstream ff6("domainNode6.dat");
+for(int i=0;i<Th6.nv;i++)
+{
+ff6<<i<<"      "<<Th6(i).x<<"      "<<Th6(i).y<<endl;
+}
+
+
+
+ofstream f7("domainElem7.dat");
+for(int i=0;i<Th7.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f7<<i<<"      "<<j<<"      "<<Th7[i][j]<<endl;
+}
+}
+ofstream ff7("domainNode7.dat");
+for(int i=0;i<Th7.nv;i++)
+{
+ff7<<i<<"      "<<Th7(i).x<<"      "<<Th7(i).y<<endl;
+}
+
+
+
+ofstream f8("domainElem8.dat");
+for(int i=0;i<Th8.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f8<<i<<"      "<<j<<"      "<<Th8[i][j]<<endl;
+}
+}
+ofstream ff8("domainNode8.dat");
+for(int i=0;i<Th8.nv;i++)
+{
+ff8<<i<<"      "<<Th8(i).x<<"      "<<Th8(i).y<<endl;
+}
+
+
+
+ofstream f9("domainElem9.dat");
+for(int i=0;i<Th9.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f9<<i<<"      "<<j<<"      "<<Th9[i][j]<<endl;
+}
+}
+ofstream ff9("domainNode9.dat");
+for(int i=0;i<Th9.nv;i++)
+{
+ff9<<i<<"      "<<Th9(i).x<<"      "<<Th9(i).y<<endl;
+}
+
+
+
+ofstream f10("domainElem10.dat");
+for(int i=0;i<Th10.nt;i++)
+{
+for(int j=0;j<3;j++)
+{
+f10<<i<<"      "<<j<<"      "<<Th10[i][j]<<endl;
+}
+}
+ofstream ff10("domainNode10.dat");
+for(int i=0;i<Th10.nv;i++)
+{
+ff10<<i<<"      "<<Th10(i).x<<"      "<<Th10(i).y<<endl;
+}

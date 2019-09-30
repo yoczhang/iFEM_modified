@@ -1,0 +1,200 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ProjectNavierStokes</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-05-18"><meta name="DC.source" content="ProjectNavierStokes.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Analytical solution</a></li><li><a href="#2">Driven cavity</a></li></ul></div><h2>Analytical solution<a name="1"></a></h2><pre class="codeinput">viscosity = 1e-12;
+errVel = zeros(3,1); errPre = zeros(3,1);
+<span class="keyword">for</span> i = 6:8
+    [errVel(i-5,1), errPre(i-5,1)] = subProjectNS(i, viscosity);
+<span class="keyword">end</span>
+
+size = [128; 256; 512];
+fprintf(<span class="string">'#viscosity = %8.4e\n'</span>, viscosity);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'errVel'</span>, <span class="string">'errPre'</span>};
+disptable(colname, size,[], errVel,[], errPre,[]);
+</pre><pre class="codeoutput">#Inter step:        1, inter error = 5.5450e-01
+#Inter step:        2, inter error = 1.5717e-01
+#Inter step:        3, inter error = 5.3778e-02
+#Inter step:        4, inter error = 1.4565e-02
+#Inter step:        5, inter error = 4.4261e-03
+#Inter step:        6, inter error = 2.1757e-03
+#Inter step:        7, inter error = 7.3757e-04
+#Inter step:        8, inter error = 1.2111e-04
+#Inter step:        9, inter error = 1.0817e-04
+#Inter step:       10, inter error = 5.5292e-05
+#Inter step:       11, inter error = 1.1392e-05
+#Inter step:       12, inter error = 4.4716e-06
+#Inter step:       13, inter error = 3.8233e-06
+#Inter step:       14, inter error = 1.2696e-06
+#Inter step:       15, inter error = 1.3782e-07
+#Inter step:       16, inter error = 2.2169e-07
+#Inter step:       17, inter error = 1.0947e-07
+#Inter step:       18, inter error = 2.0312e-08
+#Inter step:       19, inter error = 9.8832e-09
+#Inter step:       20, inter error = 7.8363e-09
+#Inter step:       21, inter error = 2.4495e-09
+#Inter step:       22, inter error = 2.9458e-10
+#Inter step:       23, inter error = 4.6850e-10
+#Inter step:       24, inter error = 2.1834e-10
+#Inter step:       25, inter error = 3.6644e-11
+#Inter step:        1, inter error = 3.8887e-01
+#Inter step:        2, inter error = 1.1021e-01
+#Inter step:        3, inter error = 3.5211e-02
+#Inter step:        4, inter error = 9.6550e-03
+#Inter step:        5, inter error = 5.9864e-03
+#Inter step:        6, inter error = 1.9724e-03
+#Inter step:        7, inter error = 7.3659e-04
+#Inter step:        8, inter error = 7.3231e-04
+#Inter step:        9, inter error = 2.0793e-04
+#Inter step:       10, inter error = 1.1105e-04
+#Inter step:       11, inter error = 9.5693e-05
+#Inter step:       12, inter error = 2.2431e-05
+#Inter step:       13, inter error = 1.6976e-05
+#Inter step:       14, inter error = 1.2351e-05
+#Inter step:       15, inter error = 2.3688e-06
+#Inter step:       16, inter error = 2.5207e-06
+#Inter step:       17, inter error = 1.5655e-06
+#Inter step:       18, inter error = 2.5524e-07
+#Inter step:       19, inter error = 3.6469e-07
+#Inter step:       20, inter error = 1.9464e-07
+#Inter step:       21, inter error = 3.1503e-08
+#Inter step:       22, inter error = 5.1574e-08
+#Inter step:       23, inter error = 2.3692e-08
+#Inter step:       24, inter error = 4.7231e-09
+#Inter step:       25, inter error = 7.1461e-09
+#Inter step:       26, inter error = 2.8158e-09
+#Inter step:       27, inter error = 7.7364e-10
+#Inter step:       28, inter error = 9.7169e-10
+#Inter step:       29, inter error = 3.2563e-10
+#Inter step:       30, inter error = 1.2616e-10
+#Inter step:       31, inter error = 1.2978e-10
+#Inter step:       32, inter error = 3.6488e-11
+#Inter step:        1, inter error = 3.1320e-01
+#Inter step:        2, inter error = 8.4971e-02
+#Inter step:        3, inter error = 2.5205e-02
+#Inter step:        4, inter error = 9.7588e-03
+#Inter step:        5, inter error = 5.4670e-03
+#Inter step:        6, inter error = 1.6908e-03
+#Inter step:        7, inter error = 1.9298e-03
+#Inter step:        8, inter error = 7.3696e-04
+#Inter step:        9, inter error = 5.2018e-04
+#Inter step:       10, inter error = 3.7436e-04
+#Inter step:       11, inter error = 1.1537e-04
+#Inter step:       12, inter error = 1.3785e-04
+#Inter step:       13, inter error = 5.4041e-05
+#Inter step:       14, inter error = 3.6734e-05
+#Inter step:       15, inter error = 2.7161e-05
+#Inter step:       16, inter error = 8.2298e-06
+#Inter step:       17, inter error = 9.8697e-06
+#Inter step:       18, inter error = 3.9702e-06
+#Inter step:       19, inter error = 2.5940e-06
+#Inter step:       20, inter error = 1.9697e-06
+#Inter step:       21, inter error = 5.8841e-07
+#Inter step:       22, inter error = 7.0623e-07
+#Inter step:       23, inter error = 2.9158e-07
+#Inter step:       24, inter error = 1.8308e-07
+#Inter step:       25, inter error = 1.4276e-07
+#Inter step:       26, inter error = 4.2169e-08
+#Inter step:       27, inter error = 5.0506e-08
+#Inter step:       28, inter error = 2.1406e-08
+#Inter step:       29, inter error = 1.2915e-08
+#Inter step:       30, inter error = 1.0341e-08
+#Inter step:       31, inter error = 3.0294e-09
+#Inter step:       32, inter error = 3.6099e-09
+#Inter step:       33, inter error = 1.5708e-09
+#Inter step:       34, inter error = 9.1065e-10
+#Inter step:       35, inter error = 7.4862e-10
+#Inter step:       36, inter error = 2.1816e-10
+#Inter step:       37, inter error = 2.5787e-10
+#Inter step:       38, inter error = 1.1522e-10
+#Inter step:       39, inter error = 6.4184e-11
+#viscosity = 1.0000e-12
+#1/h   errVel      errPre    
+128   0.037851     0.001022
+256    0.03704   0.00099737
+512   0.035741   0.00096189
+
+</pre><h2>Driven cavity<a name="2"></a></h2><p>viscosity = 1e-6; infinityNorm = 2; [errVel, errPre] = subProjectNS(8, viscosity, infinityNorm);</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Analytical solution
+viscosity = 1e-12; 
+errVel = zeros(3,1); errPre = zeros(3,1);
+for i = 6:8
+    [errVel(i-5,1), errPre(i-5,1)] = subProjectNS(i, viscosity);
+end
+
+size = [128; 256; 512];
+fprintf('#viscosity = %8.4e\n', viscosity);
+colname = {'#1/h', 'errVel', 'errPre'};
+disptable(colname, size,[], errVel,[], errPre,[]);
+
+%% Driven cavity
+% viscosity = 1e-6; infinityNorm = 2;
+% [errVel, errPre] = subProjectNS(8, viscosity, infinityNorm);
+
+
+##### SOURCE END #####
+--></body></html>

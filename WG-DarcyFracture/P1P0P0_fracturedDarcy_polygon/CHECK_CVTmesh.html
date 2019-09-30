@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>CHECK_CVTmesh</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-13"><meta name="DC.source" content="CHECK_CVTmesh.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Non-convex mesh, eipsilon = 1</a></li><li><a href="#2">Non-convex mesh, eipsilon = 1000</a></li><li><a href="#3">Non-convex mesh, eipsilon = 0.001</a></li></ul></div><h2 id="1">Non-convex mesh, eipsilon = 1</h2><pre class="codeinput">n = 4; eipsilon = 1; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_100.mat'</span>); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; nt = length(elem1); elem2 = cell(nt,1); Elem1 = cell(nt,1); Elem2 = cell(nt,1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; Elem1{i} = elem1{i}'; Elem2{i} = elem2{i}'; <span class="keyword">end</span>
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+figure; view(2); PolyMshr_PlotMsh(node1,Elem1); hold <span class="string">on</span>; PolyMshr_PlotMsh(node2,Elem2); hold <span class="string">on</span>;
+plot((0:0.001:1)', zeros(1001,1), <span class="string">'r'</span>, <span class="string">'LineWidth'</span>, 2); hold <span class="string">off</span>;
+
+data2 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_400.mat'</span>); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)];
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))];  <span class="keyword">end</span>
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data3 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_1600.mat'</span>); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_6400.mat'</span>); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 1: CVT mesh when eipsilon is 1'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>, <span class="string">'errorb'</span>,<span class="string">'H1p'</span>, <span class="string">'H1pGamma'</span>,<span class="string">'maxpGamma'</span>};
+disptable(colname,dof,[], error0,<span class="string">'%0.4e'</span>, errorb,<span class="string">'%0.4e'</span>, H1p, <span class="string">'%0.4e'</span>, H1pGamma,<span class="string">'%0.4e'</span>, maxpGamma,<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f '</span>, rate(i)); <span class="keyword">else</span>, fprintf(<span class="string">' %0.2f \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 1: CVT mesh when eipsilon is 1
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+
+ 1206   6.0493e-03   2.1767e-02   1.2494e-01   3.1263e-03   5.5892e-03
+ 4809   1.3526e-03   7.2829e-03   6.0380e-02   1.2773e-03   1.5961e-03
+19150   3.4967e-04   2.5246e-03   3.0095e-02   3.4125e-04   2.9238e-04
+76463   8.8728e-05   8.6530e-04   1.4996e-02   9.5876e-05   7.0682e-05
+
+ 2.03  1.55  1.02  1.67  2.10 
+</pre><img vspace="5" hspace="5" src="CHECK_CVTmesh_01.png" style="width:560px;height:420px;" alt=""> <h2 id="2">Non-convex mesh, eipsilon = 1000</h2><pre class="codeinput">n = 4; eipsilon = 1000; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_100.mat'</span>); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data2 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_400.mat'</span>); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data3 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_1600.mat'</span>); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_6400.mat'</span>); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 2: CVT mesh when eipsilon is 1000'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>, <span class="string">'errorb'</span>,<span class="string">'H1p'</span>, <span class="string">'H1pGamma'</span>,<span class="string">'maxpGamma'</span>};
+disptable(colname,dof,[], error0,<span class="string">'%0.4e'</span>, errorb,<span class="string">'%0.4e'</span>, H1p, <span class="string">'%0.4e'</span>, H1pGamma,<span class="string">'%0.4e'</span>, maxpGamma,<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f '</span>, rate(i)); <span class="keyword">else</span>, fprintf(<span class="string">' %0.2f \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 2: CVT mesh when eipsilon is 1000
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+
+ 1206   2.4122e+01   5.5867e+01   4.3143e+02   6.2697e+01   4.5720e+00
+ 4809   5.5657e+00   1.9821e+01   2.0923e+02   1.9775e+01   8.8689e-01
+19150   1.3592e+00   7.3031e+00   1.0528e+02   9.8545e+00   2.8363e-01
+76463   3.3982e-01   2.6479e+00   5.3018e+01   4.4428e+00   6.6565e-02
+
+ 2.05  1.46  1.01  1.27  2.03 
+</pre><h2 id="3">Non-convex mesh, eipsilon = 0.001</h2><pre class="codeinput">n = 4; eipsilon = 0.001; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_100.mat'</span>); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data2 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_400.mat'</span>); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data3 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_1600.mat'</span>); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load(<span class="string">'P1P0P0_FracturedDarcy_Polygon_6400.mat'</span>); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+<span class="keyword">for</span> i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; <span class="keyword">end</span>
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 3: CVT mesh when eipsilon is 0.001'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>, <span class="string">'errorb'</span>,<span class="string">'H1p'</span>, <span class="string">'H1pGamma'</span>,<span class="string">'maxpGamma'</span>};
+disptable(colname,dof,[], error0,<span class="string">'%0.4e'</span>, errorb,<span class="string">'%0.4e'</span>, H1p, <span class="string">'%0.4e'</span>, H1pGamma,<span class="string">'%0.4e'</span>, maxpGamma,<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f '</span>, rate(i)); <span class="keyword">else</span>, fprintf(<span class="string">' %0.2f \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 3: CVT mesh when eipsilon is 0.001
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+
+ 1206   1.0567e-01   2.1740e-01   1.5749e+00   8.7538e-04   6.1260e-02
+ 4809   2.4905e-02   7.0344e-02   7.6133e-01   4.2089e-04   1.9854e-02
+19150   5.9662e-03   2.3094e-02   3.7511e-01   1.0094e-04   3.4144e-03
+76463   1.4602e-03   7.9569e-03   1.8641e-01   3.1185e-05   6.5860e-04
+
+ 2.06  1.59  1.03  1.60  2.18 
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Non-convex mesh, eipsilon = 1
+n = 4; eipsilon = 1; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load('P1P0P0_FracturedDarcy_Polygon_100.mat'); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; nt = length(elem1); elem2 = cell(nt,1); Elem1 = cell(nt,1); Elem2 = cell(nt,1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; Elem1{i} = elem1{i}'; Elem2{i} = elem2{i}'; end
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+figure; view(2); PolyMshr_PlotMsh(node1,Elem1); hold on; PolyMshr_PlotMsh(node2,Elem2); hold on; 
+plot((0:0.001:1)', zeros(1001,1), 'r', 'LineWidth', 2); hold off;
+
+data2 = load('P1P0P0_FracturedDarcy_Polygon_400.mat'); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)]; 
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))];  end
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+ 
+data3 = load('P1P0P0_FracturedDarcy_Polygon_1600.mat'); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load('P1P0P0_FracturedDarcy_Polygon_6400.mat'); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 1: CVT mesh when eipsilon is 1');
+colname = {'#DOF',         'error0', 'errorb','H1p', 'H1pGamma','maxpGamma'};
+disptable(colname,dof,[], error0,'%0.4e', errorb,'%0.4e', H1p, '%0.4e', H1pGamma,'%0.4e', maxpGamma,'%0.4e');
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+for i = 1:5, if i<5, fprintf(' %0.2f ', rate(i)); else, fprintf(' %0.2f \n', rate(i)); end; end
+clear all
+
+%% Non-convex mesh, eipsilon = 1000
+n = 4; eipsilon = 1000; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load('P1P0P0_FracturedDarcy_Polygon_100.mat'); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data2 = load('P1P0P0_FracturedDarcy_Polygon_400.mat'); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data3 = load('P1P0P0_FracturedDarcy_Polygon_1600.mat'); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load('P1P0P0_FracturedDarcy_Polygon_6400.mat'); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 2: CVT mesh when eipsilon is 1000');
+colname = {'#DOF',         'error0', 'errorb','H1p', 'H1pGamma','maxpGamma'};
+disptable(colname,dof,[], error0,'%0.4e', errorb,'%0.4e', H1p, '%0.4e', H1pGamma,'%0.4e', maxpGamma,'%0.4e');
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+for i = 1:5, if i<5, fprintf(' %0.2f ', rate(i)); else, fprintf(' %0.2f \n', rate(i)); end; end
+clear all
+
+%% Non-convex mesh, eipsilon = 0.001
+n = 4; eipsilon = 0.001; error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1); H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+data1 = load('P1P0P0_FracturedDarcy_Polygon_100.mat'); node1 = data1.Node; elem1 = data1.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(1), errorb(1), H1p(1), H1pGamma(1), maxpGamma(1), dof(1)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data2 = load('P1P0P0_FracturedDarcy_Polygon_400.mat'); node1 = data2.Node; elem1 = data2.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(2), errorb(2), H1p(2), H1pGamma(2), maxpGamma(2), dof(2)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data3 = load('P1P0P0_FracturedDarcy_Polygon_1600.mat'); node1 = data3.Node; elem1 = data3.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(3), errorb(3), H1p(3), H1pGamma(3), maxpGamma(3), dof(3)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+data4 = load('P1P0P0_FracturedDarcy_Polygon_6400.mat'); node1 = data4.Node; elem1 = data4.Elem;
+node2 = [node1(:,1) -node1(:,2)]; elem2 = cell(length(elem1),1);
+for i = 1:length(elem1), elem2{i} = [elem1{i}(1) fliplr(elem1{i}(2:end))]; end
+[error0(4), errorb(4), H1p(4), H1pGamma(4), maxpGamma(4), dof(4)] = weakGalerkin_P1P0P0_polygon(node1,elem1,node2,elem2, eipsilon);
+
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1); H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 3: CVT mesh when eipsilon is 0.001');
+colname = {'#DOF',         'error0', 'errorb','H1p', 'H1pGamma','maxpGamma'};
+disptable(colname,dof,[], error0,'%0.4e', errorb,'%0.4e', H1p, '%0.4e', H1pGamma,'%0.4e', maxpGamma,'%0.4e');
+rate = [sum(error0Rate)/(n-1), sum(errorbRate)/(n-1), sum(H1pRate)/(n-1), sum(H1pGammaRate)/(n-1), sum(maxpGammaRate)/(n-1)];
+for i = 1:5, if i<5, fprintf(' %0.2f ', rate(i)); else, fprintf(' %0.2f \n', rate(i)); end; end
+clear all
+##### SOURCE END #####
+--></body></html>

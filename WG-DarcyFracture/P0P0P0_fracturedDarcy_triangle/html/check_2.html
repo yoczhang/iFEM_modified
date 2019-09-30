@@ -1,0 +1,226 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>check_2</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2018-01-13"><meta name="DC.source" content="check_2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">n = 6; eipsilon = 1;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+<span class="keyword">for</span> i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+<span class="keyword">end</span>
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 1: error when eipsilon is 1'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>,   <span class="string">'errorb'</span>, <span class="string">'H1p'</span>,  <span class="string">'H1pGamma'</span>, <span class="string">'maxpGamma'</span>};
+disptable(colname,dof(3:n),[], error0(3:n),<span class="string">'%0.4e'</span>, errorb(3:n),<span class="string">'%0.4e'</span>, H1p(3:n), <span class="string">'%0.4e'</span>,  H1pGamma(3:n),<span class="string">'%0.4e'</span>, maxpGamma(3:n),<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f  '</span>, rate(i)); <span class="keyword">else</span> fprintf(<span class="string">' %0.2f  \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 1: error when eipsilon is 1
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+  680   1.5260e-03   7.5389e-03   5.4535e-02   1.3628e-03   2.4408e-03
+ 2640   3.9349e-04   1.9190e-03   2.7806e-02   4.5744e-04   6.1618e-04
+10400   9.9362e-05   4.8190e-04   1.3989e-02   1.4596e-04   1.5390e-04
+41280   2.4918e-05   1.2055e-04   7.0081e-03   4.3381e-05   3.8454e-05
+
+ 1.96   1.97   0.97   1.62   2.00  
+</pre><pre class="codeinput">n = 6; eipsilon = 1000;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+<span class="keyword">for</span> i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+<span class="keyword">end</span>
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 2: error when eipsilon is 1000'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>,   <span class="string">'errorb'</span>, <span class="string">'H1p'</span>,  <span class="string">'H1pGamma'</span>, <span class="string">'maxpGamma'</span>};
+disptable(colname,dof(3:n),[], error0(3:n),<span class="string">'%0.4e'</span>, errorb(3:n),<span class="string">'%0.4e'</span>, H1p(3:n), <span class="string">'%0.4e'</span>,  H1pGamma(3:n),<span class="string">'%0.4e'</span>, maxpGamma(3:n),<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f  '</span>, rate(i)); <span class="keyword">else</span> fprintf(<span class="string">' %0.2f  \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 2: error when eipsilon is 1000
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+  680   2.4396e+00   1.4026e+01   1.2343e+02   6.8103e+01   4.9143e+00
+ 2640   6.1691e-01   3.4739e+00   6.1467e+01   2.4587e+01   1.2723e+00
+10400   1.5483e-01   8.6442e-01   3.0693e+01   8.7984e+00   3.2417e-01
+41280   3.8752e-02   2.1559e-01   1.5340e+01   3.1321e+00   8.1882e-02
+
+ 1.98   2.01   1.01   1.47   1.96  
+</pre><pre class="codeinput">n = 6; eipsilon = 0.001;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+<span class="keyword">for</span> i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+<span class="keyword">end</span>
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+<span class="keyword">for</span> i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+<span class="keyword">end</span>
+display(<span class="string">'Table 3: error when eipsilon is 0.001'</span>);
+colname = {<span class="string">'#DOF'</span>,         <span class="string">'error0'</span>,   <span class="string">'errorb'</span>, <span class="string">'H1p'</span>,  <span class="string">'H1pGamma'</span>, <span class="string">'maxpGamma'</span>};
+disptable(colname,dof(3:n),[], error0(3:n),<span class="string">'%0.4e'</span>, errorb(3:n),<span class="string">'%0.4e'</span>, H1p(3:n), <span class="string">'%0.4e'</span>,  H1pGamma(3:n),<span class="string">'%0.4e'</span>, maxpGamma(3:n),<span class="string">'%0.4e'</span>);
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+<span class="keyword">for</span> i = 1:5, <span class="keyword">if</span> i&lt;5, fprintf(<span class="string">' %0.2f  '</span>, rate(i)); <span class="keyword">else</span> fprintf(<span class="string">' %0.2f  \n'</span>, rate(i)); <span class="keyword">end</span>; <span class="keyword">end</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 3: error when eipsilon is 0.001
+ #DOF     error0       errorb         H1p       H1pGamma     maxpGamma  
+  680   1.6311e-02   7.5522e-02   4.8604e-01   2.9019e-04   2.1387e-02
+ 2640   4.1313e-03   1.8850e-02   2.4565e-01   1.0358e-04   5.4760e-03
+10400   1.0370e-03   4.6973e-03   1.2325e-01   3.6991e-05   1.3920e-03
+41280   2.5956e-04   1.1714e-03   6.1687e-02   1.3468e-05   3.5889e-04
+
+ 1.98   2.00   0.98   1.48   1.95  
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+n = 6; eipsilon = 1;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+for i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+end
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 1: error when eipsilon is 1');
+colname = {'#DOF',         'error0',   'errorb', 'H1p',  'H1pGamma', 'maxpGamma'};
+disptable(colname,dof(3:n),[], error0(3:n),'%0.4e', errorb(3:n),'%0.4e', H1p(3:n), '%0.4e',  H1pGamma(3:n),'%0.4e', maxpGamma(3:n),'%0.4e');
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+for i = 1:5, if i<5, fprintf(' %0.2f  ', rate(i)); else fprintf(' %0.2f  \n', rate(i)); end; end
+clear all
+
+%%
+n = 6; eipsilon = 1000;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+for i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+end
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 2: error when eipsilon is 1000');
+colname = {'#DOF',         'error0',   'errorb', 'H1p',  'H1pGamma', 'maxpGamma'};
+disptable(colname,dof(3:n),[], error0(3:n),'%0.4e', errorb(3:n),'%0.4e', H1p(3:n), '%0.4e',  H1pGamma(3:n),'%0.4e', maxpGamma(3:n),'%0.4e');
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+for i = 1:5, if i<5, fprintf(' %0.2f  ', rate(i)); else fprintf(' %0.2f  \n', rate(i)); end; end
+clear all
+
+%%
+n = 6; eipsilon = 0.001;
+error0 = zeros(n,1); errorb = zeros(n,1); H1p = zeros(n,1);
+H1pGamma = zeros(n,1); maxpGamma = zeros(n,1); dof = zeros(n,1);
+for i = 1:n
+    [error0(i), errorb(i), H1p(i), H1pGamma(i), maxpGamma(i), dof(i)] = FractureDarcyP0P0RT0_P0DG_2(eipsilon, i);
+end
+error0Rate = zeros(n,1); errorbRate = zeros(n,1); H1pRate = zeros(n,1);
+H1pGammaRate = zeros(n,1); maxpGammaRate = zeros(n,1); digits(3);
+for i = 2:n
+    error0Rate(i) = vpa( log(error0(i-1)/error0(i))/log(2));
+    errorbRate(i) = vpa( log(errorb(i-1)/errorb(i))/log(2));
+    H1pRate(i) = vpa( log(H1p(i-1)/H1p(i))/log(2));
+    H1pGammaRate(i) = vpa( log(H1pGamma(i-1)/H1pGamma(i))/log(2));
+    maxpGammaRate(i) = vpa( log(maxpGamma(i-1)/maxpGamma(i))/log(2));
+end
+display('Table 3: error when eipsilon is 0.001');
+colname = {'#DOF',         'error0',   'errorb', 'H1p',  'H1pGamma', 'maxpGamma'};
+disptable(colname,dof(3:n),[], error0(3:n),'%0.4e', errorb(3:n),'%0.4e', H1p(3:n), '%0.4e',  H1pGamma(3:n),'%0.4e', maxpGamma(3:n),'%0.4e');
+rate = [sum(error0Rate(3:n))/(n-2), sum(errorbRate(3:n))/(n-2), sum(H1pRate(3:n))/(n-2), sum(H1pGammaRate(3:n))/(n-2), sum(maxpGammaRate(3:n))/(n-2)];
+for i = 1:5, if i<5, fprintf(' %0.2f  ', rate(i)); else fprintf(' %0.2f  \n', rate(i)); end; end
+clear all
+##### SOURCE END #####
+--></body></html>

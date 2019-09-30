@@ -1,0 +1,245 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ProjectOseenMAC</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-01-25"><meta name="DC.source" content="ProjectOseenMAC.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Wcycle Multigrid with Overweighting</a></li><li><a href="#2">Defect Correction Procedure</a></li><li><a href="#3">Driven cavity</a></li></ul></div><h2>Wcycle Multigrid with Overweighting<a name="1"></a></h2><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
+k = 4; infFlow = 1;
+ite = zeros(k+1,1); time = zeros(k+1,1); rate = zeros(k+1,1);
+errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
+<span class="keyword">for</span> i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataOseen(n);
+
+    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Wcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, <span class="string">'accurateSolution'</span>);
+    ph = ph - mean(ph(:));
+
+    ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;
+    uL2 = 1/n*norm(ue);  vL2 = 1/n*norm(ve);
+    errVel(i-5) = sqrt(uL2^2 + vL2^2); errPre(i-5) = 1/n*norm(pe);
+<span class="keyword">end</span>
+<span class="keyword">for</span> i = 1:k+1
+    <span class="keyword">for</span> j = 4:length(residual{i})
+        rate(i) = rate(i) + exp(log(residual{i}(j)/residual{i}(4)) / (j-3));
+    <span class="keyword">end</span>
+    rate(i) = rate(i) / length(residual{i});
+<span class="keyword">end</span>
+size = 2.^(6:k+6); size = size';
+display(<span class="string">'Table 1: Wcycle'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'errVel'</span>, <span class="string">'errPre'</span>, <span class="string">'Ite'</span>, <span class="string">'Rate'</span>, <span class="string">'Time'</span>};
+disptable(colname,size,[], errVel,[], errPre,[], ite,[], rate,[], time,[]);
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 1: Wcycle
+ #1/h    errVel      errPre    Ite    Rate      Time    
+  64    0.37087     0.10793   10   0.32812   2.078125
+ 128    0.21243     0.06244   10   0.33093   6.359375
+ 256    0.11749    0.034255    9   0.31766   16.45313
+ 512   0.063783    0.018333    9   0.32303   65.26563
+1024   0.034341   0.0096891    9   0.31873   253.4531
+
+</pre><h2>Defect Correction Procedure<a name="2"></a></h2><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
+k = 4; infFlow = 1; nu = 1e-12;
+time = zeros(k+1,1);
+errVel = zeros(k+1,1); errPre = zeros(k+1,1);
+<span class="keyword">for</span> i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataOseen(n);
+
+    [uh, vh, ph, time(i-5)] = DefectionCorrection(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, nu);
+    ph = ph - mean(ph(:));
+
+    ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;
+    uL2 = 1/n*norm(ue);  vL2 = 1/n*norm(ve);
+    errVel(i-5) = sqrt(uL2^2 + vL2^2); errPre(i-5) = 1/n*norm(pe);
+<span class="keyword">end</span>
+
+size = 2.^(6:k+6); size = size';
+display(<span class="string">'Table 2: Defect Correction'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'errVel'</span>, <span class="string">'errPre'</span>, <span class="string">'Time'</span>};
+disptable(colname,size,[], errVel,[], errPre,[], time,[]);
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 2: Defect Correction
+ #1/h     errVel      errPre       Time    
+  64    0.083209    0.0046193    2.34375
+ 128    0.037816    0.0018534    6.90625
+ 256    0.015192   0.00067884   24.20313
+ 512   0.0061814   0.00029833   90.03125
+1024   0.0025159   0.00015237   368.4063
+
+</pre><h2>Driven cavity<a name="3"></a></h2><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
+k = 3; infFlow = 2; nu = 1e-6; rate = zeros(k+1,1);
+ite = zeros(k+1,1); time = zeros(k+1,1); residual = cell(k+1,1);
+<span class="keyword">for</span> i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig] = dataOseenDrivenCavity(n);
+
+    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Wcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, []);
+<span class="keyword">end</span>
+ <span class="keyword">for</span> i = 1:k+1
+    <span class="keyword">for</span> j = 4:length(residual{i})
+        rate(i) = rate(i) + exp(log(residual{i}(j)/residual{i}(4)) / (j-3));
+    <span class="keyword">end</span>
+    rate(i) = rate(i) / length(residual{i});
+<span class="keyword">end</span>
+size = 2.^(6:k+6); size = size';
+display(<span class="string">'Table 2: Driven Cavity'</span>);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'ite'</span>, <span class="string">'Rate'</span>, <span class="string">'Time'</span>};
+disptable(colname, size,[], ite,[], rate,[], time,[]);
+
+<span class="comment">% figure, surf(flipud(uh)); view(2); shading interp; colorbar;</span>
+<span class="comment">% figure, surf(flipud(vh)); view(2); shading interp; colorbar;</span>
+<span class="comment">% figure, surf(flipud(ph)); view(2); shading interp; colorbar;</span>
+clear <span class="string">all</span>
+</pre><pre class="codeoutput">Table 2: Driven Cavity
+#1/h  ite    Rate      Time    
+ 64   15   0.33547      2.875
+128   16   0.33455    8.65625
+256   17   0.34565       32.5
+512   20   0.37432   148.5469
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Wcycle Multigrid with Overweighting
+format short e
+k = 4; infFlow = 1; 
+ite = zeros(k+1,1); time = zeros(k+1,1); rate = zeros(k+1,1);
+errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
+for i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataOseen(n);
+    
+    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Wcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, 'accurateSolution');
+    ph = ph - mean(ph(:));
+    
+    ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;
+    uL2 = 1/n*norm(ue);  vL2 = 1/n*norm(ve); 
+    errVel(i-5) = sqrt(uL2^2 + vL2^2); errPre(i-5) = 1/n*norm(pe);
+end
+for i = 1:k+1
+    for j = 4:length(residual{i})
+        rate(i) = rate(i) + exp(log(residual{i}(j)/residual{i}(4)) / (j-3));
+    end
+    rate(i) = rate(i) / length(residual{i});
+end
+size = 2.^(6:k+6); size = size';
+display('Table 1: Wcycle');
+colname = {'#1/h', 'errVel', 'errPre', 'Ite', 'Rate', 'Time'};
+disptable(colname,size,[], errVel,[], errPre,[], ite,[], rate,[], time,[]);
+clear all
+
+
+%% Defect Correction Procedure
+format short e
+k = 4; infFlow = 1; nu = 1e-12;
+time = zeros(k+1,1); 
+errVel = zeros(k+1,1); errPre = zeros(k+1,1);
+for i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataOseen(n);
+    
+    [uh, vh, ph, time(i-5)] = DefectionCorrection(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, nu);
+    ph = ph - mean(ph(:));
+    
+    ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;
+    uL2 = 1/n*norm(ue);  vL2 = 1/n*norm(ve); 
+    errVel(i-5) = sqrt(uL2^2 + vL2^2); errPre(i-5) = 1/n*norm(pe);
+end
+
+size = 2.^(6:k+6); size = size';
+display('Table 2: Defect Correction');
+colname = {'#1/h', 'errVel', 'errPre', 'Time'};
+disptable(colname,size,[], errVel,[], errPre,[], time,[]);
+clear all
+
+
+
+%% Driven cavity
+format short e
+k = 3; infFlow = 2; nu = 1e-6; rate = zeros(k+1,1);
+ite = zeros(k+1,1); time = zeros(k+1,1); residual = cell(k+1,1);
+for i = 6:k+6
+    n = 2^i; level = i-1;
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig] = dataOseenDrivenCavity(n);
+    
+    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Wcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, []);
+end
+ for i = 1:k+1
+    for j = 4:length(residual{i})
+        rate(i) = rate(i) + exp(log(residual{i}(j)/residual{i}(4)) / (j-3));
+    end
+    rate(i) = rate(i) / length(residual{i});
+end
+size = 2.^(6:k+6); size = size';
+display('Table 2: Driven Cavity');
+colname = {'#1/h', 'ite', 'Rate', 'Time'};
+disptable(colname, size,[], ite,[], rate,[], time,[]);
+
+% figure, surf(flipud(uh)); view(2); shading interp; colorbar;
+% figure, surf(flipud(vh)); view(2); shading interp; colorbar;
+% figure, surf(flipud(ph)); view(2); shading interp; colorbar;
+clear all
+
+##### SOURCE END #####
+--></body></html>

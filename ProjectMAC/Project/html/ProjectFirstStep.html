@@ -1,0 +1,228 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ProjectFirstStep</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-05-10"><meta name="DC.source" content="ProjectFirstStep.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><p>infinityNorm = <tt>|u</tt>|_{infinity} assume that exact solution is zero, so infinityNorm==0</p><pre class="codeinput">viscosity = 1e-12; infinityNorm = 1e-10;
+size = [128; 256; 512];
+
+[errVel, errPre] = firstStep(viscosity, infinityNorm, <span class="string">'zeroInitial'</span>);
+fprintf(<span class="string">'Zero initial solution \n'</span>);
+fprintf(<span class="string">'#viscosity = %8.4e\n'</span>, viscosity);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'errVel'</span>, <span class="string">'errPre'</span>};
+disptable(colname, size,[], errVel,[], errPre,[]);
+
+
+[errVel, errPre] = firstStep(viscosity, infinityNorm, <span class="string">'randomInitial'</span>);
+fprintf(<span class="string">'Random initial solution \n'</span>);
+fprintf(<span class="string">'#viscosity = %8.4e\n'</span>, viscosity);
+colname = {<span class="string">'#1/h'</span>, <span class="string">'errVel'</span>, <span class="string">'errPre'</span>};
+disptable(colname, size,[], errVel,[], errPre,[]);
+</pre><pre class="codeoutput">#Inter step:        1, inter error = 0.0000e+00
+#Inter step:        1, inter error = 0.0000e+00
+#Inter step:        1, inter error = 0.0000e+00
+Zero initial solution 
+#viscosity = 1.0000e-12
+#1/h errVelerrPre
+128   0   0       
+256   0   0       
+512   0   0       
+
+#Inter step:        1, inter error = 4.0698e+12
+#Inter step:        2, inter error = 9.1227e+11
+#Inter step:        3, inter error = 2.3175e+11
+#Inter step:        4, inter error = 6.2772e+10
+#Inter step:        5, inter error = 1.7767e+10
+#Inter step:        6, inter error = 5.1879e+09
+#Inter step:        7, inter error = 1.5499e+09
+#Inter step:        8, inter error = 4.7082e+08
+#Inter step:        9, inter error = 1.4481e+08
+#Inter step:       10, inter error = 4.4955e+07
+#Inter step:       11, inter error = 1.4055e+07
+#Inter step:       12, inter error = 4.4182e+06
+#Inter step:       13, inter error = 1.3949e+06
+#Inter step:       14, inter error = 4.4194e+05
+#Inter step:       15, inter error = 1.4042e+05
+#Inter step:       16, inter error = 4.4722e+04
+#Inter step:       17, inter error = 1.4273e+04
+#Inter step:       18, inter error = 4.5631e+03
+#Inter step:       19, inter error = 1.4611e+03
+#Inter step:       20, inter error = 4.6846e+02
+#Inter step:       21, inter error = 1.5038e+02
+#Inter step:       22, inter error = 4.8328e+01
+#Inter step:       23, inter error = 1.5546e+01
+#Inter step:       24, inter error = 5.0054e+00
+#Inter step:       25, inter error = 1.6129e+00
+#Inter step:       26, inter error = 5.2011e-01
+#Inter step:       27, inter error = 1.6784e-01
+#Inter step:       28, inter error = 5.4195e-02
+#Inter step:       29, inter error = 1.7510e-02
+#Inter step:       30, inter error = 5.6606e-03
+#Inter step:       31, inter error = 1.8308e-03
+#Inter step:       32, inter error = 5.9244e-04
+#Inter step:       33, inter error = 1.9179e-04
+#Inter step:       34, inter error = 6.2130e-05
+#Inter step:        1, inter error = 1.6344e+13
+#Inter step:        2, inter error = 3.6595e+12
+#Inter step:        3, inter error = 9.2615e+11
+#Inter step:        4, inter error = 2.4986e+11
+#Inter step:        5, inter error = 7.0438e+10
+#Inter step:        6, inter error = 2.0489e+10
+#Inter step:        7, inter error = 6.0991e+09
+#Inter step:        8, inter error = 1.8466e+09
+#Inter step:        9, inter error = 5.6615e+08
+#Inter step:       10, inter error = 1.7523e+08
+#Inter step:       11, inter error = 5.4629e+07
+#Inter step:       12, inter error = 1.7127e+07
+#Inter step:       13, inter error = 5.3938e+06
+#Inter step:       14, inter error = 1.7048e+06
+#Inter step:       15, inter error = 5.4045e+05
+#Inter step:       16, inter error = 1.7177e+05
+#Inter step:       17, inter error = 5.4709e+04
+#Inter step:       18, inter error = 1.7458e+04
+#Inter step:       19, inter error = 5.5801e+03
+#Inter step:       20, inter error = 1.7862e+03
+#Inter step:       21, inter error = 5.7254e+02
+#Inter step:       22, inter error = 1.8374e+02
+#Inter step:       23, inter error = 5.9029e+01
+#Inter step:       24, inter error = 1.8983e+01
+#Inter step:       25, inter error = 6.1102e+00
+#Inter step:       26, inter error = 1.9685e+00
+#Inter step:       27, inter error = 6.3465e-01
+#Inter step:       28, inter error = 2.0477e-01
+#Inter step:       29, inter error = 6.6113e-02
+#Inter step:       30, inter error = 2.1359e-02
+#Inter step:       31, inter error = 6.9048e-03
+#Inter step:       32, inter error = 2.2334e-03
+#Inter step:       33, inter error = 7.2274e-04
+#Inter step:       34, inter error = 2.3401e-04
+#Inter step:       35, inter error = 7.5809e-05
+#Inter step:        1, inter error = 6.5291e+13
+#Inter step:        2, inter error = 1.4614e+13
+#Inter step:        3, inter error = 3.7012e+12
+#Inter step:        4, inter error = 9.9963e+11
+#Inter step:        5, inter error = 2.8221e+11
+#Inter step:        6, inter error = 8.2236e+10
+#Inter step:        7, inter error = 2.4529e+10
+#Inter step:        8, inter error = 7.4421e+09
+#Inter step:        9, inter error = 2.2867e+09
+#Inter step:       10, inter error = 7.0934e+08
+#Inter step:       11, inter error = 2.2163e+08
+#Inter step:       12, inter error = 6.9635e+07
+#Inter step:       13, inter error = 2.1976e+07
+#Inter step:       14, inter error = 6.9603e+06
+#Inter step:       15, inter error = 2.2109e+06
+#Inter step:       16, inter error = 7.0404e+05
+#Inter step:       17, inter error = 2.2466e+05
+#Inter step:       18, inter error = 7.1821e+04
+#Inter step:       19, inter error = 2.2997e+04
+#Inter step:       20, inter error = 7.3738e+03
+#Inter step:       21, inter error = 2.3674e+03
+#Inter step:       22, inter error = 7.6092e+02
+#Inter step:       23, inter error = 2.4483e+02
+#Inter step:       24, inter error = 7.8850e+01
+#Inter step:       25, inter error = 2.5416e+01
+#Inter step:       26, inter error = 8.1992e+00
+#Inter step:       27, inter error = 2.6470e+00
+#Inter step:       28, inter error = 8.5514e-01
+#Inter step:       29, inter error = 2.7644e-01
+#Inter step:       30, inter error = 8.9415e-02
+#Inter step:       31, inter error = 2.8938e-02
+#Inter step:       32, inter error = 9.3704e-03
+#Inter step:       33, inter error = 3.0357e-03
+#Inter step:       34, inter error = 9.8390e-04
+#Inter step:       35, inter error = 3.1903e-04
+#Inter step:       36, inter error = 1.0349e-04
+#Inter step:       37, inter error = 3.3593e-05
+Random initial solution 
+#viscosity = 1.0000e-12
+#1/h    errVel       errPre    
+128   5.4182e-09   7.3447e-19
+256   1.6712e-09   2.2152e-19
+512   5.4198e-10   2.4635e-20
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% infinityNorm = ||u||_{infinity}
+% assume that exact solution is zero, so infinityNorm==0
+viscosity = 1e-12; infinityNorm = 1e-10;
+size = [128; 256; 512];
+
+[errVel, errPre] = firstStep(viscosity, infinityNorm, 'zeroInitial');
+fprintf('Zero initial solution \n');
+fprintf('#viscosity = %8.4e\n', viscosity);
+colname = {'#1/h', 'errVel', 'errPre'};
+disptable(colname, size,[], errVel,[], errPre,[]);
+
+
+[errVel, errPre] = firstStep(viscosity, infinityNorm, 'randomInitial');
+fprintf('Random initial solution \n');
+fprintf('#viscosity = %8.4e\n', viscosity);
+colname = {'#1/h', 'errVel', 'errPre'};
+disptable(colname, size,[], errVel,[], errPre,[]);
+
+##### SOURCE END #####
+--></body></html>

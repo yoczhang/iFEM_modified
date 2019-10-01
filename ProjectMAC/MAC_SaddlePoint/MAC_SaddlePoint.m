@@ -1,13 +1,13 @@
 %% Vcycle Multigrid with Overweighting
 % format short e
-k = 1; infFlow = 1; nu = 1e-12; gamma = 
+k = 1; infFlow = 1; nu = 1e-0; gamma = 1e-0;
 ite = zeros(k+1,1); time = zeros(k+1,1); rate = zeros(k+1,1);
 errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
 for i = 6:k+6
     n = 2^i; level = i-1;
-    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataSaddlePoint(n, nu);
+    [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataSaddlePoint(n, nu, gamma);
     
-    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Wcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, nu, 'accurateSolution');
+    [uh, vh, ph, ite(i-5), time(i-5), residual{i-5}] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, level, data.flowa, data.flowb, infFlow, nu, 'accurateSolution');
     ph = ph - mean(ph(:));
     
     ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;

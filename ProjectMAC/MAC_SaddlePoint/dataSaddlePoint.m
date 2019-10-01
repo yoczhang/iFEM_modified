@@ -1,8 +1,6 @@
-function  [data, uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI] = dataSaddlePoint(n, nu, gamma)
-
-%% Exact data
-data = struct('f1',@f1, 'f2',@f2, 'uexact',@uexact, 'vexact',@vexact, 'pexact',@pexact, 'flowa',@flowa, 'flowb',@flowb);
-
+function [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataSaddlePoint(n, nu, gamma)
+%
+%
     %% u
     function r = uexact(x,y) 
         r = (1 - cos(2*pi*x)).*sin(2*pi*y);
@@ -70,15 +68,9 @@ data = struct('f1',@f1, 'f2',@f2, 'uexact',@uexact, 'vexact',@vexact, 'pexact',@
         r = -(ux_ + vy_ ) - p_;
     end
 
-    function r = flowa(x,y)
-        r = x.*sin(2*pi*y);
-    end
-    function r = flowb(x,y)
-        r = y.*sin(2*pi*x);
-    end
 
 %% Discrete data
-lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n; 
+lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n; width = rig - lef;
 uh = zeros(n,n+1);   vh = zeros(n+1,n); ph = zeros(n,n);
 
 [ux,uy] = meshgrid(lef: h: rig, top-h/2: -h: bot+h/2);

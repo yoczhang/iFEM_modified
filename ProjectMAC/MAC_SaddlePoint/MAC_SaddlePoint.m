@@ -7,7 +7,7 @@ for i = 6:k+6
     n = 2^i; level = i-1;
     [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataSaddlePoint(n, nu, gamma);
     
-    [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, J, nu, gamma);
+    [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, level, nu, gamma);
     
     ue = uh(:) - uI; ve = vh(:) - vI; pe = ph(:) - pI;
     uL2 = 1/n*norm(ue);  vL2 = 1/n*norm(ve);
@@ -20,9 +20,9 @@ for i = 1:k+1
     rate(i) = rate(i) / length(residual{i});
 end
 size = 2.^(6:k+6); size = size';
-display('Table 1: Wcycle');
+disp('Table 1: Wcycle');
 colname = {'#1/h', 'errVel', 'errPre', 'Ite', 'Rate', 'Time'};
 disptable(colname,size,[], errVel,[], errPre,[], ite,[], rate,[], time,[]);
-clear all
+clear
 
 

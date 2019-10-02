@@ -12,19 +12,19 @@ close all
 
 %% Step 1: Gauss-Seidel relaxation of velocity
 %% Step 2: Distributive relaxation of velocity and pressue
-k = 3;
-ite = zeros(k+1,1); time = zeros(k+1,1); 
-for i = 3:k+3
-   n = 2^i; 
-   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h] = dataStokes(n);
-%    testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
-   [ite(i-2), time(i-2)] = testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
-end
-size = 2.^(3:k+3); size = size';
-display('Table 1: DGS');
-colname = {'#1/h', 'Time', 'Ite'};
-disptable(colname,size,[], time,[], ite,[]);
-clear all
+% k = 3;
+% ite = zeros(k+1,1); time = zeros(k+1,1); 
+% for i = 3:k+3
+%    n = 2^i; 
+%    [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h] = dataStokes(n);
+% %    testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
+%    [ite(i-2), time(i-2)] = testDGS(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h);
+% end
+% size = 2.^(3:k+3); size = size';
+% disp('Table 1: DGS');
+% colname = {'#1/h', 'Time', 'Ite'};
+% disptable(colname,size,[], time,[], ite,[]);
+% clear
 
 %% Step 3: Two level method
 k = 3;

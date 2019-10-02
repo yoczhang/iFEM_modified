@@ -3,7 +3,7 @@ function [u, v, p] = DGS(u, v, p, f1h, f2h, gh, uTop, uBot, vLef, vRig, h)
 
 %% Initial setup
 n = size(u,1); mu = 1; 
-  
+
 %% Step 1: Gauss-Seidel relaxation of velocity
 for ite = 1:mu
     j = 2:n;

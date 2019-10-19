@@ -1,6 +1,6 @@
 %% Wcycle Multigrid with Overweighting
 format short e
-k = 1; infFlow = 1; nu = 1e-12;
+k = 3; infFlow = 1; nu = 1e-12;
 ite = zeros(k+1,1); time = zeros(k+1,1); rate = zeros(k+1,1);
 errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
 for i = 6:k+6

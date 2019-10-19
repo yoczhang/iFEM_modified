@@ -3,7 +3,7 @@
 % u = 20*x.*y.^3, v = 5*x.^4-5*y.^4, p = 60*x.^2.*y - 20*y.^3.
 
 clear
-clc
+% clc
 close all
 
 %% test
@@ -26,23 +26,23 @@ close all
 % disptable(colname,size,[], time,[], ite,[]);
 % clear
 
-%% Step 3: Two level method
-k = 3;
-ite = zeros(k+1,1); time = zeros(k+1,1); 
-for i = 3:k+3
-   n = 2^i; 
-   [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
-   [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, 2);
-end
-size = 2.^(3:k+3); size = size';
-display('Table 2: TwoLevel');
-colname = {'#1/h', 'Time', 'Ite'};
-disptable(colname,size,[], time,[], ite,[]);
-clear all
+% %% Step 3: Two level method
+% k = 3;
+% ite = zeros(k+1,1); time = zeros(k+1,1); 
+% for i = 3:k+3
+%    n = 2^i; 
+%    [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes(n);
+%    [uh, vh, ph, ite(i-2), time(i-2)] = Vcycle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, 2);
+% end
+% size = 2.^(3:k+3); size = size';
+% display('Table 2: TwoLevel');
+% colname = {'#1/h', 'Time', 'Ite'};
+% disptable(colname,size,[], time,[], ite,[]);
+% clear all
 
 
 %% Step 4: Vcycle multigrid method
-k = 6; 
+k = 4; 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
 errPreL2 = zeros(k+1,1);
 ite = zeros(k+1,1); time = zeros(k+1,1); 
@@ -53,7 +53,7 @@ for i = 3:k+3
    [errVelL2(i-2), errVelH1(i-2), errVelInfi(i-2), errPreL2(i-2)] = Error(uh, vh, ph, uI, vI, pI);
 end
 size = 2.^(3:k+3); size = size';
-display('Table 3: Vcycle');
+disp('Table 3: Vcycle');
 colname = {'#1/h', 'VelL2', 'VelH1', 'VelInfi', 'PreL2', 'Time', 'Ite'};
 disptable(colname,size,[], errVelL2,[], errVelH1,[], errVelInfi,[], errPreL2,[], time,[], ite,[]);
 
@@ -86,16 +86,16 @@ clear
 
 %% Show location of variables
 figureIndex;
-clear all
+clear 
 
 
 %% Show the process of prolongation for U
 % Restriction is easy to implement with one index,
 % one must consider different cases for prolongation.
 figureProU;
-clear all
+clear 
 
 
 %% Show the process of prolongation for V
 figureProV;
-clear all
+clear 

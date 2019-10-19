@@ -5,7 +5,8 @@ uh = uh(:); vh = vh(:); ph = ph(:);
 ue = uI - uh; ve = vI - vh; pe = pI - ph;
 
 %% relative L2 error of velocity
-errVelL2 = sqrt((norm(ue)^2 + norm(ve)^2) / (norm(uI)^2 + norm(vI)^2));
+% errVelL2 = sqrt((norm(ue)^2 + norm(ve)^2) / (norm(uI)^2 + norm(vI)^2));
+errVelL2 = sqrt(norm(ue)^2 + norm(ve)^2);
 
 %% relative H1 error of velocity
 nx = n+1;  ny = n;  ex = ones(nx,1);  ey = ones(ny,1);
@@ -33,7 +34,8 @@ A = A + Ae;
 temp3 = ve(inteNodes)'*A(inteNodes,inteNodes)*ve(inteNodes);
 temp4 = vI(inteNodes)'*A(inteNodes,inteNodes)*vI(inteNodes);
 clear nx ny ex ey Tx Ty A a b Ae LEF RIG TOP BOT
-errVelH1 = sqrt((temp1 + temp3) / (temp2 + temp4));
+% errVelH1 = sqrt((temp1 + temp3) / (temp2 + temp4));
+errVelH1 = sqrt(temp1 + temp3);
 
 %% Infinity
 errVelInfi = max(sqrt(ue.^2 + ve.^2));

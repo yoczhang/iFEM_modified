@@ -6,7 +6,7 @@ ue = uI - uh; ve = vI - vh; pe = pI - ph;
 
 %% relative L2 error of velocity
 % errVelL2 = sqrt((norm(ue)^2 + norm(ve)^2) / (norm(uI)^2 + norm(vI)^2));
-errVelL2 = sqrt(norm(ue)^2 + norm(ve)^2);
+errVelL2 = sqrt((1/n*norm(ue))^2 + (1/n*norm(ve))^2);
 
 %% relative H1 error of velocity
 nx = n+1;  ny = n;  ex = ones(nx,1);  ey = ones(ny,1);

@@ -5,7 +5,7 @@ close all
 clear
 
 k = 4; 
-nn = 5;
+nn = 3;
 mu = 1e-0; gamma = 1e-0;
 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
@@ -18,6 +18,8 @@ for i = nn:nn+k
     [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataSaddlePoint(n, mu, gamma);
     
     [uh, vh, ph, ite(i-nn+1), time(i-nn+1)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, level, mu, gamma);
+    
+%     check_results(uh, vh, uI, vI)
     
     [errVelL2(i-nn+1), errVelH1(i-nn+1), errVelInfi(i-nn+1), errPreL2(i-nn+1)] = Error(uh, vh, ph, uI, vI, pI);
     

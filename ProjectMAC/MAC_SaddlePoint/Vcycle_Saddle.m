@@ -15,6 +15,10 @@ while (error > 1e-6)
 
     error = sqrt( (norm(r1,'fro'))^2 + (norm(r2,'fro'))^2 + (norm(r3,'fro'))^2);
     step = step + 1;
+    
+    if mod(step,10) == 0
+        disp(['step = ', num2str(step), ' --- ', 'error=', num2str(error)])
+    end
 end
 time = time + cputime - t0;
 

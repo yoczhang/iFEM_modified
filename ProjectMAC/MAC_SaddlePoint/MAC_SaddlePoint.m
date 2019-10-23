@@ -5,8 +5,8 @@ close all
 clear
 
 k = 4; 
-nn = 3;
-mu = 1e-0; gamma = 1e-0;
+nn = 5;
+mu = 1e-1; gamma = 1e-0;
 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
 errPreL2 = zeros(k+1,1);

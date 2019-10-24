@@ -6,8 +6,7 @@ clear
 
 k = 4; 
 nn = 5;
-mu = 0; 
-gamma = 1e-0;
+mu = 1e-1;
 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
 errPreL2 = zeros(k+1,1);
@@ -15,10 +14,10 @@ ite = zeros(k+1,1); time = zeros(k+1,1);
 
 % errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
 for i = nn:nn+k
-    n = 2^i; level = i;
-    [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataSaddlePoint(n, mu, gamma);
+    n = 2^i; level = i-1;
+    [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = dataStokes_mu(n, mu);
     
-    [uh, vh, ph, ite(i-nn+1), time(i-nn+1)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, level, mu, gamma);
+    [uh, vh, ph, ite(i-nn+1), time(i-nn+1)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, level, mu);
     
 %     check_results(uh, vh, uI, vI)
     
@@ -55,5 +54,3 @@ if showfigure
 end
 
 clear
-
-

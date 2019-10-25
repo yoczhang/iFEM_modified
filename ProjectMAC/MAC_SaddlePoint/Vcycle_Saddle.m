@@ -23,7 +23,7 @@ end
 time = time + cputime - t0;
 
     function [eu, ev, ep] = VCYCLE(eu, ev, ep, r1, r2, r3, uT, uB, vL, vR, J)
-        disp(['VCYCLE: in the ', num2str(J), '-level'])
+%         disp(['VCYCLE: in the ', num2str(J), '-level'])
         if J == 1
             d = size(r1,1);
             eu = zeros(d,d+1); ev = zeros(d+1,d); ep = zeros(d,d); 
@@ -52,10 +52,11 @@ time = time + cputime - t0;
         
         % Restrict the residual to the coarse grid
         [rH1, rH2, rH3] = Res(R1, R2, R3);
-        
+        [duH, dvH, dpH] = Res(eu, ev, ep);
+
         % Vcycle
         d = size(rH1,1);
-        duH = zeros(d,d+1); dvH = zeros(d+1,d); dpH = zeros(d,d); 
+% %         duH = zeros(d,d+1); dvH = zeros(d+1,d); dpH = zeros(d,d); 
         [duH, dvH, dpH] = VCYCLE(duH, dvH, dpH, rH1, rH2, rH3, zeros(1,d+1), zeros(1,d+1), zeros(d+1,1), zeros(d+1,1), J-1);
         
         % Wcycle

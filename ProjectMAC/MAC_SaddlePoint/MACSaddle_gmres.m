@@ -12,13 +12,17 @@ errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
 errPreL2 = zeros(k+1,1);
 ite = zeros(k+1,1); time = zeros(k+1,1);
 
+tol = 1e-12;  maxit = 15; 
 % errVel = zeros(k+1,1); errPre = zeros(k+1,1); residual = cell(k+1,1);
 for i = nn:nn+k
     n = 2^i; level = i;
     %- generate the init values
     [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, mu, gamma);
+        %> actually, we only the f1h, f2h, gh
+        
+    bh = [f1h(:); f2h(:); gh(:)];
+    Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
     
-    [uh, vh, ph, ite(i-nn+1), time(i-nn+1)] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, width, level, mu, gamma);
     
     %check_results(uh, vh, uI, vI)
     
@@ -54,6 +58,5 @@ if showfigure
     set(h4,'Interpreter','latex')
 end
 
-clear
 
 

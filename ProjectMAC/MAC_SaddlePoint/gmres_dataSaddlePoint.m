@@ -1,6 +1,7 @@
-function [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, nu, gamma)
+function [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, mu, gamma)
 %
 %
+
     %% u
     function r = uexact(x,y) 
         r = (1 - cos(2*pi*x)).*sin(2*pi*y);
@@ -52,14 +53,14 @@ function [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width
         uxx_ = uxxexact(x,y);
         uyy_ = uyyexact(x,y);
         px_ = pxexact(x,y);
-        r = -nu*(uxx_+uyy_) + gamma*u_ + px_;
+        r = -mu*(uxx_+uyy_) + gamma*u_ + px_;
     end
     function r = f2(x,y)
         v_ = vexact(x,y);
         vxx_ = vxxexact(x,y);
         vyy_ = vyyexact(x,y);
         py_ = pyexact(x,y);
-        r = -nu*(vxx_+vyy_) + gamma*v_ + py_;
+        r = -mu*(vxx_+vyy_) + gamma*v_ + py_;
     end
     function r = g(x,y)
         ux_ = uxexact(x,y);
@@ -88,17 +89,31 @@ yy = top: -h: bot; j = 1:n+1; vLef(j,1) = vexact(lef,yy(j)); vRig(j,1) = vexact(
 uI = uexact(ux(:),uy(:)); vI = vexact(vx(:),vy(:)); pI = pexact(px(:),py(:)); 
 
 %- generate the random 0,1 matrix
-randm = rand(n*(n+1), 1);
-randm(randm<=0.3) = 1;
-randm(randm>0.3) = 0;
+try 
+    saveFilename = ['kappa_k_',num2str(n)];
+    load(saveFilename, 'kappa_k_u', 'kappa_k_v')
+catch
+    randm = rand(n*(n+1), 1);
+    randm(randm<=0.3) = 1;
+    randm(randm>0.3) = 0;
 
-kappa_k_u = reshape(randm, n, n+1);
-kappa_k_v = reshape(randm, n+1, n);
+    kappa_k_u = reshape(randm, n, n+1);
+    kappa_k_v = reshape(randm, n+1, n);
+end
+saveFilename = ['kappa_k_',num2str(n)];
+save( saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma')
 
-f1h = f1(ux(:),uy(:)); f1h = reshape(f1h,n,n+1); f1h = f1h + kappa_k_u.*uI;
-f2h = f2(vx(:),vy(:)); f2h = reshape(f2h,n+1,n);  f2h = f2h + kappa_k_v.*vI;
+f1h = f1(ux(:),uy(:)); 
+f1h = reshape(f1h,n,n+1); 
+uI = reshape(uI,n,n+1); 
+f1h = f1h + kappa_k_u.*uI;
+
+f2h = f2(vx(:),vy(:)); 
+f2h = reshape(f2h,n+1,n);  
+vI = reshape(vI,n+1,n); 
+f2h = f2h + kappa_k_v.*vI;
 gh = g(px(:),py(:)); gh = reshape(gh,n,n);
 
-save kappa_k kappa_k_u kappa_k_v
+
 clear ux uy vx vy px py xx yy
 end

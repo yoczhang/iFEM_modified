@@ -93,12 +93,13 @@ try
     saveFilename = ['kappa_k_',num2str(n)];
     load(saveFilename, 'kappa_k_u', 'kappa_k_v')
 catch
-    randm = rand(n*(n+1), 1);
-    randm(randm<=0.3) = 1;
-    randm(randm>0.3) = 0;
+    randmat1 = rand(n*(n+1), 1);
+    randmat2 = zeros(n*(n+1),1);
+    randmat2(randmat1<=0.3) = 1;
+    randmat2(randmat1>0.3) = 0;
 
-    kappa_k_u = reshape(randm, n, n+1);
-    kappa_k_v = reshape(randm, n+1, n);
+    kappa_k_u = reshape(randmat2, n, n+1);
+    kappa_k_v = reshape(randmat2, n+1, n);
 end
 saveFilename = ['kappa_k_',num2str(n)];
 save( saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma')

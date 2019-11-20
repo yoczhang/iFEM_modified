@@ -2,7 +2,7 @@ function [errVelL2, errVelH1, errVelInfi, errPreL2] = Error(uh, vh, ph, uI, vI, 
 
 n = size(ph,1);
 uh = uh(:); vh = vh(:); ph = ph(:);
-ue = uI - uh; ve = vI - vh; pe = pI - ph;
+ue = uI(:) - uh; ve = vI(:) - vh; pe = pI(:) - ph;
 
 %% relative L2 error of velocity
 % errVelL2 = sqrt((norm(ue)^2 + norm(ve)^2) / (norm(uI)^2 + norm(vI)^2));

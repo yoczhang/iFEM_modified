@@ -89,18 +89,25 @@ yy = top: -h: bot; j = 1:n+1; vLef(j,1) = vexact(lef,yy(j)); vRig(j,1) = vexact(
 uI = uexact(ux(:),uy(:)); vI = vexact(vx(:),vy(:)); pI = pexact(px(:),py(:)); 
 
 %- generate the random 0,1 matrix
-try 
-    saveFilename = ['kappa_k_',num2str(n)];
-    load(saveFilename, 'kappa_k_u', 'kappa_k_v')
-catch
-    randmat1 = rand(n*(n+1), 1);
-    randmat2 = zeros(n*(n+1),1);
-    randmat2(randmat1<=0.3) = 1;
-    randmat2(randmat1>0.3) = 0;
+% try 
+%     saveFilename = ['kappa_k_',num2str(n)];
+%     load(saveFilename, 'kappa_k_u', 'kappa_k_v')
+% catch
+%     randmat1 = rand(n*(n+1), 1);
+%     randmat2 = zeros(n*(n+1),1);
+%     randmat2(randmat1<=0.3) = 1;
+%     randmat2(randmat1>0.3) = 0;
+% 
+%     kappa_k_u = reshape(randmat2, n, n+1);
+%     kappa_k_v = reshape(randmat2, n+1, n);
+% end
+randmat1 = rand(n*(n+1), 1);
+randmat2 = zeros(n*(n+1),1);
+randmat2(randmat1<=0.3) = 1;
+randmat2(randmat1>0.3) = 0;
 
-    kappa_k_u = reshape(randmat2, n, n+1);
-    kappa_k_v = reshape(randmat2, n+1, n);
-end
+kappa_k_u = reshape(randmat2, n, n+1);
+kappa_k_v = reshape(randmat2, n+1, n);
 saveFilename = ['kappa_k_',num2str(n)];
 save( saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma')
 

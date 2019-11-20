@@ -2,6 +2,7 @@
 
 close all
 clear
+clc
 
 k = 4; 
 nn = 5;

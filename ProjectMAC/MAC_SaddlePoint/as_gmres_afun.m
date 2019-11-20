@@ -23,6 +23,11 @@ vh = reshape(vh, n+1, n);
 ph = U(location_ph);
 ph = reshape(ph, n, n);
 
+uTop = uh(1,:);
+uBot = uh(end, :);
+vLef = vh(:, 1);
+vRig = vh(:, end);
+
 
 %- The following is to compute A*x
 ru = zeros(n,n+1); 

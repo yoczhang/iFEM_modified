@@ -29,7 +29,7 @@ time = time + cputime - t0;
             eu = zeros(d,d+1); ev = zeros(d+1,d); ep = zeros(d,d); 
             err = 1;
             flag = 0;
-            maxIt = 2000;
+            maxIt = 1000;
             while ((err > 1e-6) && (flag <= maxIt))
                 [eu, ev, ep] = DGS_Saddle(eu, ev, ep, r1, r2, r3, zeros(1,d+1), zeros(1,d+1), zeros(d+1,1), zeros(d+1,1), width/d, mu, gamma);
                 [temp1, temp2, temp3] = getResidual_Saddle(eu, ev, ep, r1, r2, r3, zeros(1,d+1), zeros(1,d+1), zeros(d+1,1), zeros(d+1,1), width/d, mu, gamma);

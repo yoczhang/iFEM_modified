@@ -23,6 +23,8 @@ for i = nn:nn+k
         
     bh = [f1h(:); f2h(:); gh(:)];
     Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
+    save Uh Uh
+    
     location_uh = 1 : n*(n+1);
     location_vh = n*(n+1)+1 : 2*n*(n+1);
     location_ph = 2*n*(n+1)+1 : length(Uh);
@@ -36,7 +38,6 @@ for i = nn:nn+k
     ph = Uh(location_ph);
     ph = reshape(ph, n, n);
     
-    save Uh Uh
     
     
     %check_results(uh, vh, uI, vI)

@@ -47,7 +47,7 @@ rv(i,j) = (ph(i-1,j) - ph(i,j))/h + gamma*vh(i,j) - mu*(vh(i-1,j) + vh(i+1,j) + 
 rv(i,1) = (ph(i-1,1) - ph(i,1))/h + gamma*vh(i,1) - mu*(vh(i-1,1) + vh(i+1,1) + 2*vLef(i,1) + vh(i,2) - 5*vh(i,1))/h^2;
 rv(i,n) = (ph(i-1,n) - ph(i,n))/h + gamma*vh(i,n) - mu*(vh(i-1,n) + vh(i+1,n) + vh(i,n-1) + 2*vRig(i,1) - 5*vh(i,n))/h^2;
 rv = rv + kappa_k_v.*vh;
-    
+
 i = 1:n; j = 1:n;
 rp(i,j) = - ph(i,j) - (uh(i,j+1) - uh(i,j))/h + (vh(i,j) - vh(i+1,j))/h;
 

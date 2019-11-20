@@ -24,7 +24,7 @@ load(saveFilename, 'mu', 'gamma')
 
 lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n; width = rig - lef;
 uh = zeros(n,n+1);   vh = zeros(n+1,n); ph = zeros(n,n);
-level = log2(n)-1;
+level = log2(n);
 
 [uh, vh, ph, ~, ~] = Vcycle_Saddle(uh, vh, ph, f1h, f2h, gh, zeros(1,n+1), zeros(1,n+1), zeros(n+1,1), zeros(n+1,1), h, width, level, mu, gamma);
 

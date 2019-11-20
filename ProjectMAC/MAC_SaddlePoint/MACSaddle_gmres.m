@@ -36,6 +36,8 @@ for i = nn:nn+k
     ph = Uh(location_ph);
     ph = reshape(ph, n, n);
     
+    save Uh Uh
+    
     
     %check_results(uh, vh, uI, vI)
     

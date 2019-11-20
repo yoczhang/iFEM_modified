@@ -5,7 +5,7 @@ time = 0; t0 = cputime; n = width / h;
 [r1, r2, r3] = getResidual_Saddle(uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, h, mu, gamma);
 
 %% Loop
-error = 1; step = 0; Nite = 20;
+error = 1; step = 0; Nite = 30;
 while (error > 1e-6)
     du = zeros(n,n+1); dv = zeros(n+1,n); dp = zeros(n,n);
     [du, dv, dp] = VCYCLE(du, dv, dp, r1, r2, r3, zeros(1,n+1), zeros(1,n+1), zeros(n+1,1), zeros(n+1,1), J);
@@ -29,7 +29,7 @@ time = time + cputime - t0;
             eu = zeros(d,d+1); ev = zeros(d+1,d); ep = zeros(d,d); 
             err = 1;
             flag = 0;
-            maxIt = 1000;
+            maxIt = 2000;
             while ((err > 1e-6) && (flag <= maxIt))
                 [eu, ev, ep] = DGS_Saddle(eu, ev, ep, r1, r2, r3, zeros(1,d+1), zeros(1,d+1), zeros(d+1,1), zeros(d+1,1), width/d, mu, gamma);
                 [temp1, temp2, temp3] = getResidual_Saddle(eu, ev, ep, r1, r2, r3, zeros(1,d+1), zeros(1,d+1), zeros(d+1,1), zeros(d+1,1), width/d, mu, gamma);

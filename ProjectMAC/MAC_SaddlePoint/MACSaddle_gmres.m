@@ -6,7 +6,7 @@ clc
 
 k = 4; 
 nn = 5;
-mu = 1e-4; 
+mu = 1e-2; 
 gamma = 1e-2;
 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);

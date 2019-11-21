@@ -104,7 +104,7 @@ uI = uexact(ux(:),uy(:)); vI = vexact(vx(:),vy(:)); pI = pexact(px(:),py(:));
 randmat1 = rand(n*(n+1), 1);
 randmat2 = zeros(n*(n+1),1);
 randmat2(randmat1<=0.3) = 1;
-randmat2(randmat1>0.3) = 0;
+randmat2(randmat1>0.3) = 1;
 
 kappa_k_u = reshape(randmat2, n, n+1);
 kappa_k_v = reshape(randmat2, n+1, n);

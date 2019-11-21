@@ -8,7 +8,7 @@ n = (sqrt(3*L+1)-1)/3;
 lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n;
 
 saveFilename = ['kappa_k_',num2str(n)];
-load(saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma')
+load(saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma', 'uTop', 'uBot', 'vLef', 'vRig')
 
 location_uh = 1 : n*(n+1);
 location_vh = n*(n+1)+1 : 2*n*(n+1);
@@ -23,10 +23,10 @@ vh = reshape(vh, n+1, n);
 ph = U(location_ph);
 ph = reshape(ph, n, n);
 
-uTop = uh(1,:);
-uBot = uh(end, :);
-vLef = vh(:, 1);
-vRig = vh(:, end);
+% uTop = uh(1,:);
+% uBot = uh(end, :);
+% vLef = vh(:, 1);
+% vRig = vh(:, end);
 
 
 %- The following is to compute A*x

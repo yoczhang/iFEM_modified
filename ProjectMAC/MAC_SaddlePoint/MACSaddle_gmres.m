@@ -6,8 +6,8 @@ clc
 
 k = 4; 
 nn = 5;
-mu = 1e-2; 
-gamma = 1e-2;
+mu = 1; 
+gamma = 0;
 
 errVelL2 = zeros(k+1,1); errVelH1 = zeros(k+1,1); errVelInfi = zeros(k+1,1);
 errPreL2 = zeros(k+1,1);
@@ -22,7 +22,8 @@ for i = nn:nn+k
         %> actually, we only the f1h, f2h, gh
         
     bh = [f1h(:); f2h(:); gh(:)];
-    Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
+    %Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
+    Uh = gmres(@as_gmres_afun, bh);
     save Uh Uh
     
     location_uh = 1 : n*(n+1);

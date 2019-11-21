@@ -103,13 +103,13 @@ uI = uexact(ux(:),uy(:)); vI = vexact(vx(:),vy(:)); pI = pexact(px(:),py(:));
 % end
 randmat1 = rand(n*(n+1), 1);
 randmat2 = zeros(n*(n+1),1);
-randmat2(randmat1<=0.3) = 1;
-randmat2(randmat1>0.3) = 1;
+randmat2(randmat1<=0.3) = 0;
+randmat2(randmat1>0.3) = 0;
 
 kappa_k_u = reshape(randmat2, n, n+1);
 kappa_k_v = reshape(randmat2, n+1, n);
 saveFilename = ['kappa_k_',num2str(n)];
-save( saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma')
+save( saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma', 'uTop', 'uBot', 'vLef', 'vRig')
 
 f1h = f1(ux(:),uy(:)); 
 f1h = reshape(f1h,n,n+1); 

@@ -21,7 +21,20 @@ for i = nn:nn+k
     [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, mu, gamma);
         %> actually, we only the f1h, f2h, gh
         
+%     %- we only need the interior nodes
+%     % find the index of interior nodes
+%     % 1. the boundary index of u
+%     n = length(uTop) - 1;
+%     uBindex = true(n,n+1);
+%     uBindex(:,1) = false;
+%     uBindex(:,end) = false;
+%     vBindex = true(n+1,n);
+%     vBindex(1,:) = false;
+%     vBindex(end,:) = false;
+%     bh = [f1h(uBindex(:)); f2h(vBindex(:)); gh(:)];
+    
     bh = [f1h(:); f2h(:); gh(:)];
+    
     %Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
     Uh = gmres(@as_gmres_afun, bh);
     save Uh Uh

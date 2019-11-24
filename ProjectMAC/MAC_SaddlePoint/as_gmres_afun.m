@@ -4,7 +4,7 @@ function r = as_gmres_afun(U)
 %- Firstly, we need to get the size of uh, vh and ph
 %- uh: [n x n+1]; vh: [n+1 x n]; ph: [n x n];
 L = length(U);
-n = (sqrt(3*L+1)-1)/3;
+n = (sqrt(3*L+1)+1)/3;
 lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n;
 
 saveFilename = ['kappa_k_',num2str(n)];

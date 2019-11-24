@@ -1,29 +1,39 @@
-function [f1h, f2h] = rhs_remove_Dir_nodes(f1h, f2h, uI, vI, pI)
-%- To remove the Dirichlet nodes of the rhs.
+function r = as_gmres_afun_backup(U)
+% This the backup of 'as_gmres_afun.m'
+%- The input U contains uh, vh and ph
 
-
-n = size(f1h, 1);
-saveFilename = ['kappa_k_',num2str(n)];
-load(saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma', 'uTop', 'uBot', 'vLef', 'vRig')
+%- Firstly, we need to get the size of uh, vh and ph
+%- uh: [n x n+1]; vh: [n+1 x n]; ph: [n x n];
+L = length(U);
+n = (sqrt(3*L+1)-1)/3;
 lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n;
 
-uI = reshape(uI(:), n, n+1);
-vI = reshape(vI(:), n+1, n);
-pI = reshape(pI(:), n, n);
+saveFilename = ['kappa_k_',num2str(n)];
+load(saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma', 'uTop', 'uBot', 'vLef', 'vRig')
 
-uh = zeros(n, n+1);
-uh(:,1) = uI(:,1);
-uh(:,end) = uI(:,end);
+location_uh = 1 : n*(n+1);
+location_vh = n*(n+1)+1 : 2*n*(n+1);
+location_ph = 2*n*(n+1)+1 : L;
 
-vh = zeros(n+1, n);
-vh(1, :) = vI(1, :);
-vh(end, :) = vI(end, :);
+uh = U(location_uh); 
+uh = reshape(uh, n, n+1);
 
-ph = pI;
+vh = U(location_vh);
+vh = reshape(vh, n+1, n);
+
+ph = U(location_ph);
+ph = reshape(ph, n, n);
+
+% uTop = uh(1,:);
+% uBot = uh(end, :);
+% vLef = vh(:, 1);
+% vRig = vh(:, end);
 
 
+%- The following is to compute A*x
 ru = zeros(n,n+1); 
 rv = zeros(n+1,n); 
+rp = zeros(n,n);
 
 i = 2:n-1; 
 j = 2:n;
@@ -39,7 +49,11 @@ rv(i,1) = (ph(i-1,1) - ph(i,1))/h + gamma*vh(i,1) - mu*(vh(i-1,1) + vh(i+1,1) + 
 rv(i,n) = (ph(i-1,n) - ph(i,n))/h + gamma*vh(i,n) - mu*(vh(i-1,n) + vh(i+1,n) + vh(i,n-1) + 2*vRig(i,1) - 5*vh(i,n))/h^2;
 rv = rv + kappa_k_v.*vh;
 
-f1h = f1h - ru;
-f2h = f2h - rv;
+i = 1:n; j = 1:n;
+rp(i,j) = - ph(i,j) - (uh(i,j+1) - uh(i,j))/h + (vh(i,j) - vh(i+1,j))/h;
+
+
+%- the final results
+r = [ru(:); rv(:); rp(:)];
 
 end

@@ -10,15 +10,19 @@ lef = 0; rig = 1; top = 1; bot = 0; h = (rig - lef) / n;
 saveFilename = ['kappa_k_',num2str(n)];
 load(saveFilename, 'kappa_k_u', 'kappa_k_v', 'mu', 'gamma', 'uTop', 'uBot', 'vLef', 'vRig')
 
-location_uh = 1 : n*(n+1);
-location_vh = n*(n+1)+1 : 2*n*(n+1);
-location_ph = 2*n*(n+1)+1 : L;
+location_uh = 1 : n*(n-1);
+location_vh = n*(n-1)+1 : 2*n*(n-1);
+location_ph = 2*n*(n-1)+1 : L;
+
+val0 = zeros(n,1);
 
 uh = U(location_uh); 
-uh = reshape(uh, n, n+1);
+uh = reshape(uh, n, n-1);
+uh = [val0, uh, val0];
 
 vh = U(location_vh);
-vh = reshape(vh, n+1, n);
+vh = reshape(vh, n-1, n);
+vh = [val0'; vh; val0'];
 
 ph = U(location_ph);
 ph = reshape(ph, n, n);
@@ -51,6 +55,9 @@ rv = rv + kappa_k_v.*vh;
 i = 1:n; j = 1:n;
 rp(i,j) = - ph(i,j) - (uh(i,j+1) - uh(i,j))/h + (vh(i,j) - vh(i+1,j))/h;
 
+%- truncation
+ru = ru(:, 2:n);
+rv = rv(2:n, :);
 
 %- the final results
 r = [ru(:); rv(:); rp(:)];

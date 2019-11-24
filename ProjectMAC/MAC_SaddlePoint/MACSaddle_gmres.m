@@ -18,15 +18,17 @@ tol = 1e-12;  maxit = 15;
 for i = nn:nn+k
     n = 2^i; level = i;
     %- generate the init values
-    [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, mu, gamma);
+    [~, ~, ~, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width] = gmres_dataSaddlePoint(n, mu, gamma);
         %> actually, we only the f1h, f2h, gh
-        
+    uI = reshape(uI(:), n, n+1);
+    vI = reshape(vI(:), n+1, n);
+    pI = reshape(pI(:), n, n);
+    
     [f1h, f2h] = rhs_remove_Dir_nodes(f1h, f2h, uI, vI, pI);
     
     %- we only need the interior nodes
     % find the index of interior nodes
     % 1. the boundary index of u
-    n = length(uTop) - 1;
     uBindex = true(n,n+1);
     uBindex(:,1) = false;
     uBindex(:,end) = false;
@@ -35,21 +37,27 @@ for i = nn:nn+k
     vBindex(end,:) = false;
     bh = [f1h(uBindex(:)); f2h(vBindex(:)); gh(:)];
     
+    temp_n = 2*n*(n+1)+n*n;
+    
 %     bh = [f1h(:); f2h(:); gh(:)];
     
     %Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
-    Uh = gmres(@as_gmres_afun, bh);
-    save Uh Uh
+    Uh = gmres(@as_gmres_afun, bh, 20);
+    %save Uh Uh
     
-    location_uh = 1 : n*(n+1);
-    location_vh = n*(n+1)+1 : 2*n*(n+1);
-    location_ph = 2*n*(n+1)+1 : length(Uh);
+    location_uh = 1 : n*(n-1);
+    location_vh = n*(n-1)+1 : 2*n*(n-1);
+    location_ph = 2*n*(n-1)+1 : length(Uh);
 
     uh = Uh(location_uh); 
-    uh = reshape(uh, n, n+1);
+    uh = reshape(uh, n, n-1);
+    uh_ = [uI(:,1), uh, uI(:,end)];
+    uh = uh_;
 
     vh = Uh(location_vh);
-    vh = reshape(vh, n+1, n);
+    vh = reshape(vh, n-1, n);
+    vh_ = [vI(1,:); vh; vI(end,:)];
+    vh = vh_;
 
     ph = Uh(location_ph);
     ph = reshape(ph, n, n);

@@ -24,25 +24,33 @@ for i = nn:nn+k
     vI = reshape(vI(:), n+1, n);
     pI = reshape(pI(:), n, n);
     
-    [f1h, f2h] = rhs_remove_Dir_nodes(f1h, f2h, uI, vI, pI);
+%     uI = 0*uI;
+%     vI = 0*vI;
+%     pI = 0*pI;
+%     f1h = 0*f1h;
+%     f2h = 0*f2h;
+%     gh = 0*gh;
+    
+    
+    [f1h, f2h, gh] = rhs_remove_Dir_nodes_forStokes(f1h, f2h, gh, uI, vI, pI);
     
     %- we only need the interior nodes
     % find the index of interior nodes
     % 1. the boundary index of u
-    uBindex = true(n,n+1);
-    uBindex(:,1) = false;
-    uBindex(:,end) = false;
-    vBindex = true(n+1,n);
-    vBindex(1,:) = false;
-    vBindex(end,:) = false;
-    bh = [f1h(uBindex(:)); f2h(vBindex(:)); gh(:)];
+    ufreenodes = true(n,n+1);
+    ufreenodes(:,1) = false;
+    ufreenodes(:,end) = false;
+    vfreenodes = true(n+1,n);
+    vfreenodes(1,:) = false;
+    vfreenodes(end,:) = false;
+    bh = [f1h(ufreenodes(:)); f2h(vfreenodes(:)); gh(:)];
     
     temp_n = 2*n*(n+1)+n*n;
     
 %     bh = [f1h(:); f2h(:); gh(:)];
     
     %Uh = gmres(@as_gmres_afun, bh, 10, tol, maxit, @as_gmres_mfun);
-    Uh = gmres(@as_gmres_afun, bh, 20);
+    Uh = gmres(@as_gmres_afun_forStokes, bh, 20);
     %save Uh Uh
     
     location_uh = 1 : n*(n-1);

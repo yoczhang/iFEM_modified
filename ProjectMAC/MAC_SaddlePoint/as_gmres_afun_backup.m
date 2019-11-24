@@ -50,7 +50,7 @@ rv(i,n) = (ph(i-1,n) - ph(i,n))/h + gamma*vh(i,n) - mu*(vh(i-1,n) + vh(i+1,n) + 
 rv = rv + kappa_k_v.*vh;
 
 i = 1:n; j = 1:n;
-rp(i,j) = - ph(i,j) - (uh(i,j+1) - uh(i,j))/h + (vh(i,j) - vh(i+1,j))/h;
+rp(i,j) = - ph(i,j) - (uh(i,j+1) - uh(i,j))/h - (vh(i,j) - vh(i+1,j))/h;
 
 
 %- the final results

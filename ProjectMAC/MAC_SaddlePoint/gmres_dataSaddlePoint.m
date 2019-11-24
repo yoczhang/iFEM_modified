@@ -62,11 +62,18 @@ function [uh, vh, ph, f1h, f2h, gh, uTop, uBot, vLef, vRig, uI, vI, pI, h, width
         py_ = pyexact(x,y);
         r = -mu*(vxx_+vyy_) + gamma*v_ + py_;
     end
+%     function r = g(x,y)
+%         ux_ = uxexact(x,y);
+%         vy_ = vyexact(x,y);
+%         p_ = pexact(x,y);
+%         r = -(ux_ + vy_ ) - p_;
+%     end
+
     function r = g(x,y)
         ux_ = uxexact(x,y);
         vy_ = vyexact(x,y);
-        p_ = pexact(x,y);
-        r = -(ux_ + vy_ ) - p_;
+        %p_ = pexact(x,y);
+        r = -(ux_ + vy_ );
     end
 
 

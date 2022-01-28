@@ -60,18 +60,20 @@ N = zeros(maxIt,1); h = zeros(maxIt,1);
 for k = 1:maxIt
     % refine mesh
     t = cputime;
-    if strcmp(refType,'red')
-        if nv == 4
-            [node,elem,bdFlag] = uniformrefinequad(node,elem,bdFlag);
-        else
-            [node,elem,bdFlag] = uniformrefine(node,elem,bdFlag);
-        end        
-    elseif strcmp(refType,'bisect')
-        [node,elem,bdFlag] = uniformbisect(node,elem,bdFlag);
-    end
+%     if strcmp(refType,'red')
+%         if nv == 4
+%             [node,elem,bdFlag] = uniformrefinequad(node,elem,bdFlag);
+%         else
+%             [node,elem,bdFlag] = uniformrefine(node,elem,bdFlag);
+%         end        
+%     elseif strcmp(refType,'bisect')
+%         [node,elem,bdFlag] = uniformbisect(node,elem,bdFlag);
+%     end
     meshTime(k) = cputime - t;    
     % solve the equation
     switch elemType
+        case 'P1_periodic'     % piecewise linear function P1 element with periodic BC
+            [soln,eqn,info] = PoissonPeriodic(node,elem,bdFlag,pde,option);
         case 'P1'     % piecewise linear function P1 element
             [soln,eqn,info] = Poisson(node,elem,bdFlag,pde,option);
         case 'Q1'     % piecewise linear function P1 element

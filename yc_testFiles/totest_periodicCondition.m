@@ -1,5 +1,6 @@
 % |--- yc test the periodic condition
 clear
+clc
 
 square = [0,1,0,1];
 h = 0.5;
@@ -40,26 +41,44 @@ Nelem = size(elem, 1);
 Ndof = max(max(elem));
 A_orig = sym(zeros(Ndof,Ndof));
 A_peri = sym(zeros(Ndof,Ndof));
-
+F_o = sym(zeros(Ndof,1));
+F_p = sym(zeros(Ndof,1));
 
 for el = 1:Nelem
     temp = ['a', int2str(el), '_'];
+    temp_f = ['f', int2str(el), '_'];
     for ii = 1:3
         row_o = elem(el, ii);
-        row = elem2dof(el, ii);
+        row_p = elem2dof(el, ii);
         for jj = 1:3
             col_o = elem(el, jj);
-            col = elem2dof(el, jj);
+            col_p = elem2dof(el, jj);
             A_orig(row_o, col_o) = A_orig(row_o, col_o) ...
                 + sym([temp, int2str(row_o), int2str(col_o)]);
-            A_peri(row, col) = A_peri(row, col) ...
+            A_peri(row_p, col_p) = A_peri(row_p, col_p) ...
                 + sym([temp, int2str(row_o), int2str(col_o)]);
         end
+        F_o(row_o) = F_o(row_o) + sym([temp, int2str(row_o)]);
+        F_p(row_p) = F_p(row_p) + sym([temp, int2str(row_o)]);
     end
 end
 
 
+a_o = A_orig;
+a_o(1, :) = a_o(1, :) + a_o(7, :);
+a_o(2, :) = a_o(2, :) + a_o(8, :);
+a_o(3, :) = a_o(3, :) + a_o(9, :);
 
+a_o(:, 1) = a_o(:, 1) + a_o(:, 7);
+a_o(:, 2) = a_o(:, 2) + a_o(:, 8);
+a_o(:, 3) = a_o(:, 3) + a_o(:, 9);
+
+a_o(7, :) = 0;
+a_o(8, :) = 0;
+a_o(9, :) = 0;
+a_o(:, 7) = 0;
+a_o(:, 8) = 0;
+a_o(:, 9) = 0;
 
 
 

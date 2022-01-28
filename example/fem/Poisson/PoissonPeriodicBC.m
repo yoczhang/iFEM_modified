@@ -17,6 +17,7 @@
 
 clear variables
 %% Setting
+% 这里只验证很特殊的几个自由度的周期性边界条件, 不要更改网格大小和自由度排列
 [node,elem] = squaremesh([0,1,0,1],0.25); 
 mesh = struct('node',node,'elem',elem);
 option.L0 = 0;
@@ -27,20 +28,7 @@ option.elemType = 'P1_periodic';
 %% Non-empty Dirichlet boundary condition.
 option.plotflag = 1;
 pde = sincosdata;
-mesh.bdFlag = setboundary(node,elem,'Dirichlet','~(x==0)','Neumann','x==0');
-femPoisson(mesh,pde,option);
-
-%% Pure Neumann boundary condition.
-option.plotflag = 0;
-pde = sincosNeumanndata;
-% pde = sincosdata;
-mesh.bdFlag = setboundary(node,elem,'Neumann');
-femPoisson(mesh,pde,option);
-
-%% Pure Robin boundary condition.
-option.plotflag = 0;
-pde = sincosRobindata;
-mesh.bdFlag = setboundary(node,elem,'Robin');
+mesh.bdFlag = setboundary(node,elem,'Dirichlet','(y==0) | (y==1)');
 femPoisson(mesh,pde,option);
 
 %% Conclusion
